@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dedicatorias · Yuxzitl & Olaf</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --tinta:        #33391F;
+  --pergamino:    #FBF7EA;
+  --pergamino-2:  #F1EEE3;
+  --rosa-viejo:   #A6822C;
+  --oro:          #C9A227;
+  --blanco-calido:#FFFFFF;
+  --display: "Fraunces", serif;
+  --texto:   "Jost", sans-serif;
+  --sombra: 0 18px 40px -18px rgba(51,57,31,.35);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:var(--texto);
+  background:var(--pergamino);
+  color:var(--tinta);
+  min-height:100vh;
+}
+.envoltura{ max-width:640px; margin:0 auto; padding:60px 24px 90px; }
+h1,h2{ font-family:var(--display); font-weight:500; }
+.ojo-de-cerradura{ text-transform:uppercase; letter-spacing:.22em; font-size:.68rem; color:var(--oro); font-weight:500; }
+
+.divisor{ width:110px; height:30px; margin:16px auto 0; color:var(--oro); }
+.divisor svg{ width:100%; height:100%; }
+
+.cabecera{ text-align:center; margin-bottom:36px; }
+.cabecera h1{ font-size:2.1rem; font-style:italic; margin-top:10px; }
+
+.resumen{
+  display:flex; justify-content:center; gap:32px; flex-wrap:wrap;
+  margin:8px 0 40px; text-align:center;
+}
+.resumen .num{ font-family:var(--display); font-size:1.7rem; color:var(--oro); }
+.resumen .lbl{ font-size:.64rem; letter-spacing:.12em; text-transform:uppercase; opacity:.65; }
+
+.boton{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 22px; border:1px solid var(--oro); background:transparent; color:var(--tinta);
+  font-family:var(--texto); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+  cursor:pointer; text-decoration:none;
+}
+.boton:hover{ background:var(--oro); color:var(--blanco-calido); }
+.fila-botones{ display:flex; justify-content:center; margin-bottom:44px; }
+
+/* -------- carta de dedicatoria -------- */
+.carta{
+  position:relative;
+  background:var(--blanco-calido);
+  border-radius:2px;
+  padding:36px 34px 26px;
+  box-shadow:var(--sombra);
+  margin-bottom:28px;
+}
+.carta .corazon{
+  width:26px; height:26px; margin:0 auto 16px; color:var(--oro); display:block;
+}
+.carta .mensaje{
+  font-family:var(--display); font-style:italic; font-size:1.15rem; line-height:1.65;
+  text-align:center; color:var(--tinta);
+}
+.carta .firma{
+  margin-top:22px; text-align:right; font-family:var(--display); font-style:italic; font-size:1.1rem;
+  color:var(--rosa-viejo);
+}
+.carta .firma .personas{
+  display:block; font-family:var(--texto); font-style:normal; font-size:.7rem;
+  letter-spacing:.06em; text-transform:uppercase; opacity:.6; margin-top:2px;
+}
+.carta .fecha{
+  position:absolute; top:18px; right:20px;
+  font-size:.64rem; letter-spacing:.05em; opacity:.45;
+}
+
+.seccion-titulo{ margin:50px 0 16px; text-align:center; }
+.seccion-titulo h2{ font-size:1.2rem; font-style:italic; }
+.tabla-confirmaciones{ width:100%; border-collapse:collapse; font-size:.8rem; }
+.tabla-confirmaciones th, .tabla-confirmaciones td{
+  text-align:left; padding:8px 8px; border-bottom:1px solid var(--pergamino-2);
+}
+.tabla-confirmaciones th{
+  font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--rosa-viejo); font-weight:500;
+}
+
+.vacio, .estado{ text-align:center; opacity:.6; padding:30px 10px; font-size:.9rem; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     ⚙️ CONFIGURACIÓN — pega aquí la misma URL que usaste en index.html
+     ================================================================ -->
+<script>
+const CONFIG = {
+  nombrePareja: "Yuxzitl & Olaf",
+  // La misma URL de Google Apps Script que pegaste en index.html
+  // (CONFIG.urlConfirmaciones), terminada en /exec.
+  urlConfirmaciones: "https://script.google.com/macros/s/AKfycbzq4spw5obSP7GICQUfyru4CRQimiRQBhfPoBoXuSSOpKfI1jYDml6oa0-2EJHh0C9kYQ/exec"
+};
+</script>
+
+<div class="envoltura">
+  <div class="cabecera">
+    <p class="ojo-de-cerradura">Solo para ustedes</p>
+    <h1 id="titulo-panel">Dedicatorias</h1>
+    <div class="divisor"><svg viewBox="0 0 120 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 17c14 0 14-12 24-12s10 12 24 12 14-12 24-12 10 12 24 12 14-12 24-12" stroke="currentColor" stroke-width="1"/><circle cx="60" cy="17" r="3" fill="currentColor"/></svg></div>
+  </div>
+
+  <div class="resumen" id="resumen"></div>
+
+  <div class="fila-botones">
+    <button class="boton" id="btn-actualizar">Actualizar</button>
+  </div>
+
+  <div id="estado" class="estado"></div>
+  <div id="cont-dedicatorias"></div>
+
+  <div class="seccion-titulo">
+    <h2>Lista de confirmaciones</h2>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="tabla-confirmaciones" id="tabla-confirmaciones"></table>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const SVG_CORAZON = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10.1-9.3C.4 8.7 1.9 5 5.4 4.3c2-.4 3.9.5 5 2.1a5.9 5.9 0 0 1 5-2.1c3.5.7 5 4.4 3.5 7.4C19.5 16.4 12 21 12 21z"/></svg>`;
+
+$("titulo-panel").textContent = "Dedicatorias de " + CONFIG.nombrePareja;
+
+function formatearFecha(iso){
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString("es-MX", { day:"numeric", month:"short", year:"numeric" });
+  } catch { return iso; }
+}
+
+function escaparHTML(texto){
+  const div = document.createElement("div");
+  div.textContent = texto || "";
+  return div.innerHTML;
+}
+
+async function cargarDatos(){
+  $("estado").textContent = "Cargando...";
+  $("cont-dedicatorias").innerHTML = "";
+  $("tabla-confirmaciones").innerHTML = "";
+  $("resumen").innerHTML = "";
+
+  if (!CONFIG.urlConfirmaciones || CONFIG.urlConfirmaciones.startsWith("PEGA_AQUI")) {
+    $("estado").textContent = "Falta configurar CONFIG.urlConfirmaciones en este archivo (la misma URL que usaste en index.html).";
+    return;
+  }
+
+  if (location.protocol === "file:") {
+    $("estado").innerHTML =
+      "Este archivo se abrió directamente desde tu computadora (doble clic), y los " +
+      "navegadores bloquean ese tipo de conexión por seguridad.<br><br>" +
+      "Solución: sube <code>panel-dedicatorias.html</code> a donde tengas hospedada " +
+      "la invitación (GitHub Pages, Netlify, Vercel o Firebase Hosting) y ábrelo " +
+      "desde esa URL en vez de abrir el archivo local.";
+    return;
+  }
+
+  try {
+    const url = `${CONFIG.urlConfirmaciones}?accion=listar`;
+    const resp = await fetch(url);
+    if (!resp.ok) {
+      $("estado").textContent = `El servidor respondió con un error (código ${resp.status}). Revisa que la URL de CONFIG.urlConfirmaciones sea exactamente la misma que en index.html.`;
+      return;
+    }
+    const datos = await resp.json();
+
+    if (!datos.ok) {
+      $("estado").textContent = "No se pudieron cargar los datos: " + (datos.error || "error desconocido") + ".";
+      return;
+    }
+
+    $("estado").textContent = "";
+    pintarDatos(datos.confirmaciones);
+  } catch (err) {
+    $("estado").innerHTML =
+      "No se pudo conectar.<br><br>" +
+      "<strong>Detalle técnico:</strong> " + escaparHTML(err.message) + "<br><br>" +
+      "Revisa: 1) que la URL de CONFIG.urlConfirmaciones sea correcta y termine en " +
+      "<code>/exec</code>, 2) que en Google Apps Script, en \"Quién tiene acceso\", " +
+      "esté puesto \"Cualquier usuario\", y 3) que hayas creado una \"Nueva versión\" " +
+      "al implementar después de cualquier cambio.";
+  }
+}
+
+function pintarDatos(confirmaciones){
+  const confirmados = confirmaciones.filter(c => c.asiste === "Sí");
+  const totalPersonas = confirmados.reduce((s,c) => s + (c.pases || 0), 0);
+  const conMensaje = confirmaciones.filter(c => c.mensaje && c.mensaje.trim());
+
+  $("resumen").innerHTML = `
+    <div><div class="num">${confirmados.length}</div><div class="lbl">Confirmaron</div></div>
+    <div><div class="num">${totalPersonas}</div><div class="lbl">Personas</div></div>
+    <div><div class="num">${conMensaje.length}</div><div class="lbl">Dedicatorias</div></div>
+  `;
+
+  if (conMensaje.length === 0) {
+    $("cont-dedicatorias").innerHTML = `<p class="vacio">Todavía no hay dedicatorias. Aparecerán aquí en cuanto algún invitado escriba una al confirmar.</p>`;
+  } else {
+    $("cont-dedicatorias").innerHTML = conMensaje.map(c => `
+      <div class="carta">
+        <span class="fecha">${formatearFecha(c.fecha)}</span>
+        <div class="corazon">${SVG_CORAZON}</div>
+        <p class="mensaje">«${escaparHTML(c.mensaje)}»</p>
+        <p class="firma">${escaparHTML(c.nombre)}
+          <span class="personas">${c.pases} persona${c.pases === 1 ? "" : "s"}</span>
+        </p>
+      </div>
+    `).join("");
+  }
+
+  if (confirmaciones.length === 0) {
+    $("tabla-confirmaciones").innerHTML = `<tr><td class="vacio">Aún no hay confirmaciones.</td></tr>`;
+  } else {
+    $("tabla-confirmaciones").innerHTML = `
+      <tr><th>Nombre</th><th>Asiste</th><th>Personas</th><th>Fecha</th></tr>
+      ${confirmaciones.map(c => `
+        <tr>
+          <td>${escaparHTML(c.nombre)}</td>
+          <td>${escaparHTML(c.asiste)}</td>
+          <td>${c.pases}</td>
+          <td>${formatearFecha(c.fecha)}</td>
+        </tr>
+      `).join("")}
+    `;
+  }
+}
+
+$("btn-actualizar").addEventListener("click", cargarDatos);
+
+cargarDatos();
+</script>
+</body>
+</html>
