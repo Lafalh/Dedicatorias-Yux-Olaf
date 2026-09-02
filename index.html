@@ -84,6 +84,27 @@ h1,h2{ font-family:var(--display); font-weight:500; }
   font-size:.64rem; letter-spacing:.05em; opacity:.45;
 }
 
+/* -------- carrusel tipo "álbum" -------- */
+.carrusel{ position:relative; max-width:460px; margin:0 auto; overflow:hidden; padding:6px; }
+.carrusel .carta{ margin-bottom:0; }
+.carrusel-pista{ will-change:transform, opacity; }
+.carrusel-controles{
+  display:flex; justify-content:center; align-items:center; gap:26px;
+  margin-top:24px;
+}
+.btn-flecha{
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid var(--oro); background:transparent; color:var(--tinta);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; padding:0; flex:0 0 auto;
+}
+.btn-flecha:hover{ background:var(--oro); color:var(--blanco-calido); }
+.btn-flecha svg{ width:18px; height:18px; }
+.carrusel-indicador{
+  text-align:center; margin-top:12px;
+  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--rosa-viejo);
+}
+
 .seccion-titulo{ margin:50px 0 16px; text-align:center; }
 .seccion-titulo h2{ font-size:1.2rem; font-style:italic; }
 .tabla-confirmaciones{ width:100%; border-collapse:collapse; font-size:.8rem; }
@@ -202,6 +223,93 @@ async function cargarDatos(){
   }
 }
 
+let listaDedicatorias = [];
+let indiceActual = 0;
+
+const SVG_FLECHA_IZQ = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>`;
+const SVG_FLECHA_DER = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
+
+function renderCarta(c){
+  return `
+    <div class="carta">
+      <span class="fecha">${formatearFecha(c.fecha)}</span>
+      <div class="corazon">${SVG_CORAZON}</div>
+      <p class="mensaje">«${escaparHTML(c.mensaje)}»</p>
+      <p class="firma">${escaparHTML(c.nombre)}
+        <span class="personas">${c.pases} persona${c.pases === 1 ? "" : "s"}</span>
+      </p>
+    </div>`;
+}
+
+function mostrarCarrusel(){
+  const cont = $("cont-dedicatorias");
+
+  if (listaDedicatorias.length === 0) {
+    cont.innerHTML = `<p class="vacio">Todavía no hay dedicatorias. Aparecerán aquí en cuanto algún invitado escriba una al confirmar.</p>`;
+    return;
+  }
+
+  indiceActual = 0;
+  cont.innerHTML = `
+    <div class="carrusel">
+      <div class="carrusel-pista" id="carrusel-pista">${renderCarta(listaDedicatorias[0])}</div>
+    </div>
+    ${listaDedicatorias.length > 1 ? `
+      <div class="carrusel-controles">
+        <button class="btn-flecha" id="btn-prev" aria-label="Dedicatoria anterior">${SVG_FLECHA_IZQ}</button>
+        <button class="btn-flecha" id="btn-next" aria-label="Dedicatoria siguiente">${SVG_FLECHA_DER}</button>
+      </div>
+      <p class="carrusel-indicador" id="carrusel-indicador"></p>
+    ` : ""}
+  `;
+
+  if (listaDedicatorias.length > 1) {
+    actualizarIndicador();
+    $("btn-prev").addEventListener("click", () => cambiarCarta(-1));
+    $("btn-next").addEventListener("click", () => cambiarCarta(1));
+    document.addEventListener("keydown", manejarTeclado);
+  }
+}
+
+function manejarTeclado(ev){
+  if (!document.getElementById("carrusel-pista")) return;
+  if (ev.key === "ArrowLeft") cambiarCarta(-1);
+  if (ev.key === "ArrowRight") cambiarCarta(1);
+}
+
+function actualizarIndicador(){
+  $("carrusel-indicador").textContent = `${indiceActual + 1} / ${listaDedicatorias.length}`;
+}
+
+function cambiarCarta(direccion){
+  const pista = $("carrusel-pista");
+  if (!pista || pista.dataset.animando === "1") return;
+  pista.dataset.animando = "1";
+
+  // el disco "sale" hacia el lado contrario al que entra la siguiente tarjeta
+  pista.style.transition = "transform .32s ease, opacity .32s ease";
+  pista.style.transform = `translateX(${direccion * -34}px) scale(.9) rotate(${direccion * -4}deg)`;
+  pista.style.opacity = "0";
+
+  setTimeout(() => {
+    // loop: al pasar del último regresa al primero, y viceversa
+    indiceActual = (indiceActual + direccion + listaDedicatorias.length) % listaDedicatorias.length;
+    pista.innerHTML = renderCarta(listaDedicatorias[indiceActual]);
+
+    pista.style.transition = "none";
+    pista.style.transform = `translateX(${direccion * 34}px) scale(.9) rotate(${direccion * 4}deg)`;
+    pista.style.opacity = "0";
+    void pista.offsetWidth; // fuerza el reflow para que la siguiente transición sí anime
+
+    pista.style.transition = "transform .32s ease, opacity .32s ease";
+    pista.style.transform = "translateX(0) scale(1) rotate(0)";
+    pista.style.opacity = "1";
+
+    actualizarIndicador();
+    pista.dataset.animando = "0";
+  }, 320);
+}
+
 function pintarDatos(confirmaciones){
   const confirmados = confirmaciones.filter(c => c.asiste === "Sí");
   const totalPersonas = confirmados.reduce((s,c) => s + (c.pases || 0), 0);
@@ -213,20 +321,8 @@ function pintarDatos(confirmaciones){
     <div><div class="num">${conMensaje.length}</div><div class="lbl">Dedicatorias</div></div>
   `;
 
-  if (conMensaje.length === 0) {
-    $("cont-dedicatorias").innerHTML = `<p class="vacio">Todavía no hay dedicatorias. Aparecerán aquí en cuanto algún invitado escriba una al confirmar.</p>`;
-  } else {
-    $("cont-dedicatorias").innerHTML = conMensaje.map(c => `
-      <div class="carta">
-        <span class="fecha">${formatearFecha(c.fecha)}</span>
-        <div class="corazon">${SVG_CORAZON}</div>
-        <p class="mensaje">«${escaparHTML(c.mensaje)}»</p>
-        <p class="firma">${escaparHTML(c.nombre)}
-          <span class="personas">${c.pases} persona${c.pases === 1 ? "" : "s"}</span>
-        </p>
-      </div>
-    `).join("");
-  }
+  listaDedicatorias = conMensaje;
+  mostrarCarrusel();
 
   if (confirmaciones.length === 0) {
     $("tabla-confirmaciones").innerHTML = `<tr><td class="vacio">Aún no hay confirmaciones.</td></tr>`;
