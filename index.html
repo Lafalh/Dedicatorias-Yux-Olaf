@@ -29,19 +29,19 @@ body{
   color:var(--tinta);
   min-height:100vh;
 }
-.envoltura{ max-width:640px; margin:0 auto; padding:60px 24px 90px; }
+.envoltura{ max-width:1000px; margin:0 auto; padding:60px 24px 90px; }
 h1,h2{ font-family:var(--display); font-weight:500; }
 .ojo-de-cerradura{ text-transform:uppercase; letter-spacing:.22em; font-size:.68rem; color:var(--oro); font-weight:500; }
 
 .divisor{ width:110px; height:30px; margin:16px auto 0; color:var(--oro); }
 .divisor svg{ width:100%; height:100%; }
 
-.cabecera{ text-align:center; margin-bottom:36px; }
+.cabecera{ text-align:center; margin-bottom:36px; max-width:640px; margin-left:auto; margin-right:auto; }
 .cabecera h1{ font-size:2.1rem; font-style:italic; margin-top:10px; }
 
 .resumen{
   display:flex; justify-content:center; gap:32px; flex-wrap:wrap;
-  margin:8px 0 40px; text-align:center;
+  margin:8px auto 40px; text-align:center; max-width:640px;
 }
 .resumen .num{ font-family:var(--display); font-size:1.7rem; color:var(--oro); }
 .resumen .lbl{ font-size:.64rem; letter-spacing:.12em; text-transform:uppercase; opacity:.65; }
@@ -84,32 +84,49 @@ h1,h2{ font-family:var(--display); font-weight:500; }
 /* -------- carrusel tipo "álbum": varias tarjetas visibles, la del
    centro grande y las de los lados chicas y tenues, en loop -------- */
 .carrusel{
-  display:flex; align-items:center; justify-content:center; gap:10px;
+  display:flex; align-items:center; justify-content:center; gap:14px;
   max-width:100%; margin:0 auto; padding:10px 0;
 }
 .carrusel-slot{
   flex:0 0 auto;
-  transition:flex-basis .45s cubic-bezier(.4,0,.2,1), opacity .45s ease, transform .45s ease;
+  transition:flex-basis .45s cubic-bezier(.4,0,.2,1), height .45s cubic-bezier(.4,0,.2,1), opacity .45s ease, transform .45s ease;
   overflow:hidden;
 }
 .carrusel-slot .carta{
-  width:100%; height:100%; padding:22px 18px;
+  width:100%; height:100%; padding:26px 22px;
   display:flex; flex-direction:column; justify-content:center;
 }
 /* centro: tarjeta completa */
-.carrusel-slot[data-nivel="0"]{ flex-basis:230px; height:310px; opacity:1; z-index:3; }
-.carrusel-slot[data-nivel="0"] .carta{ padding:30px 26px; }
+.carrusel-slot[data-nivel="0"]{ flex-basis:340px; height:430px; opacity:1; z-index:3; }
+.carrusel-slot[data-nivel="0"] .carta{ padding:40px 36px; }
+.carrusel-slot[data-nivel="0"] .mensaje{ font-size:1.22rem; }
 /* vecinos inmediatos: versión reducida */
-.carrusel-slot[data-nivel="1"]{ flex-basis:120px; height:190px; opacity:.75; z-index:2; }
-.carrusel-slot[data-nivel="1"] .carta{ padding:16px 12px; }
+.carrusel-slot[data-nivel="1"]{ flex-basis:170px; height:260px; opacity:.75; z-index:2; }
+.carrusel-slot[data-nivel="1"] .carta{ padding:20px 16px; }
 /* extremos: solo una pista de que hay más */
-.carrusel-slot[data-nivel="2"]{ flex-basis:70px; height:130px; opacity:.4; z-index:1; }
-.carrusel-slot[data-nivel="2"] .carta{ padding:12px 8px; }
+.carrusel-slot[data-nivel="2"]{ flex-basis:100px; height:170px; opacity:.4; z-index:1; }
+.carrusel-slot[data-nivel="2"] .carta{ padding:14px 10px; }
 
-.mini-corazon{ width:16px; height:16px; margin:0 auto 8px; color:var(--oro); }
+.mini-corazon{ width:18px; height:18px; margin:0 auto 9px; color:var(--oro); }
 .mini-nombre{
-  text-align:center; font-family:var(--display); font-style:italic; font-size:.8rem;
+  text-align:center; font-family:var(--display); font-style:italic; font-size:.88rem;
   color:var(--tinta); line-height:1.3; overflow-wrap:break-word;
+}
+
+@media (max-width:760px){
+  .carrusel{ gap:8px; }
+  .carrusel-slot[data-nivel="0"]{ flex-basis:250px; height:360px; }
+  .carrusel-slot[data-nivel="0"] .carta{ padding:28px 22px; }
+  .carrusel-slot[data-nivel="0"] .mensaje{ font-size:1.08rem; }
+  .carrusel-slot[data-nivel="1"]{ flex-basis:120px; height:210px; }
+  .carrusel-slot[data-nivel="2"]{ flex-basis:74px; height:140px; }
+}
+@media (max-width:480px){
+  .carrusel-slot[data-nivel="2"]{ display:none; }
+  .carrusel-slot[data-nivel="0"]{ flex-basis:210px; height:340px; }
+  .carrusel-slot[data-nivel="0"] .carta{ padding:24px 18px; }
+  .carrusel-slot[data-nivel="0"] .mensaje{ font-size:1rem; }
+  .carrusel-slot[data-nivel="1"]{ flex-basis:90px; height:190px; }
 }
 
 .carrusel-controles{
@@ -129,9 +146,9 @@ h1,h2{ font-family:var(--display); font-weight:500; }
   font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--rosa-viejo);
 }
 
-.seccion-titulo{ margin:50px 0 16px; text-align:center; }
+.seccion-titulo{ margin:50px auto 16px; text-align:center; max-width:640px; }
 .seccion-titulo h2{ font-size:1.2rem; font-style:italic; }
-.tabla-confirmaciones{ width:100%; border-collapse:collapse; font-size:.8rem; }
+.tabla-confirmaciones{ width:100%; max-width:640px; margin:0 auto; border-collapse:collapse; font-size:.8rem; }
 .tabla-confirmaciones th, .tabla-confirmaciones td{
   text-align:left; padding:8px 8px; border-bottom:1px solid var(--pergamino-2);
 }
