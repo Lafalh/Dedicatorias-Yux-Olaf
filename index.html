@@ -53,7 +53,9 @@ h1,h2{ font-family:var(--display); font-weight:500; }
   cursor:pointer; text-decoration:none;
 }
 .boton:hover{ background:var(--oro); color:var(--blanco-calido); }
-.fila-botones{ display:flex; justify-content:center; margin-bottom:44px; }
+.boton--solido{ background:var(--oro); color:var(--blanco-calido); }
+.boton--solido:hover{ background:var(--tinta); border-color:var(--tinta); }
+.fila-botones{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:44px; }
 
 /* -------- carta de dedicatoria -------- */
 .carta{
@@ -184,6 +186,7 @@ const CONFIG = {
 
   <div class="fila-botones">
     <button class="boton" id="btn-actualizar">Actualizar</button>
+    <a class="boton boton--solido" href="croquis-mesas.html">Croquis de mesas</a>
   </div>
 
   <div id="estado" class="estado"></div>
