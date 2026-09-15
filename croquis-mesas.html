@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Croquis de mesas · Yuxzitl &amp; Olaf</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#33391F; --pergamino:#FBF7EA; --pergamino-2:#F1EEE3; --blanco:#FFFFFF;
+  --rosa-viejo:#A6822C; --oro:#C9A227; --salvia:#8B9A5B; --alerta:#B3413C;
+  --display:"Fraunces",serif; --texto:"Jost",sans-serif;
+  --sombra:0 14px 34px -16px rgba(51,57,31,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{ font-family:var(--texto); background:var(--pergamino); color:var(--tinta); font-size:14px; }
+h1,h2,h3{ font-family:var(--display); font-weight:500; }
+
+header{ padding:22px 26px 16px; border-bottom:1px solid var(--pergamino-2); display:flex;
+        align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; background:var(--blanco); }
+header h1{ font-size:1.7rem; font-style:italic; }
+header .sub{ font-size:.76rem; color:var(--rosa-viejo); letter-spacing:.14em; text-transform:uppercase; }
+.acciones{ display:flex; gap:8px; flex-wrap:wrap; }
+
+.boton{ font-family:var(--texto); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+        border:1px solid var(--oro); background:transparent; color:var(--tinta);
+        padding:8px 15px; border-radius:2px; cursor:pointer; text-decoration:none; display:inline-block; }
+.boton:hover{ background:var(--oro); color:var(--blanco); }
+.boton--solido{ background:var(--oro); color:var(--blanco); }
+.boton--solido:hover{ background:var(--tinta); border-color:var(--tinta); }
+.boton:disabled{ opacity:.35; cursor:default; }
+.boton.chico{ padding:5px 10px; font-size:.64rem; }
+
+.resumen{ display:flex; flex-wrap:wrap; gap:0; padding:13px 26px; background:var(--blanco);
+          border-bottom:1px solid var(--pergamino-2); }
+.dato{ padding:2px 24px 2px 0; margin-right:24px; border-right:1px solid var(--pergamino-2); }
+.dato:last-child{ border-right:none; }
+.dato .num{ font-family:var(--display); font-size:1.5rem; color:var(--tinta); line-height:1.1; }
+.dato .lbl{ font-size:.63rem; color:var(--rosa-viejo); letter-spacing:.08em; text-transform:uppercase; margin-top:2px; }
+.dato.alerta .num{ color:var(--alerta); }
+
+main{ display:flex; align-items:flex-start; gap:0; }
+.col-plano{ flex:1.3; padding:20px 18px 50px 26px; overflow:auto; border-right:1px solid var(--pergamino-2); }
+.col-lista{ flex:1; min-width:340px; max-width:460px; background:var(--blanco); align-self:stretch;
+            display:flex; flex-direction:column; }
+
+.plano{ display:grid; grid-template-columns:repeat(6,84px); grid-template-rows:30px repeat(9,84px) 36px;
+        gap:9px 20px; justify-content:start; padding:4px; min-width:600px; }
+.rotulo{ display:flex; align-items:center; justify-content:center; font-size:.62rem; letter-spacing:.1em;
+         color:var(--rosa-viejo); border:1px dashed var(--pergamino-2); border-radius:6px; }
+.mesa{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center;
+       cursor:pointer; border:2px solid var(--pergamino-2); background:var(--blanco);
+       transition:transform .12s, box-shadow .12s; user-select:none; }
+.mesa.redonda{ border-radius:50%; }
+.mesa.rectangular{ border-radius:8px; }
+.mesa:hover{ transform:translateY(-2px); box-shadow:0 6px 14px rgba(51,57,31,.16); }
+.mesa.sel{ box-shadow:0 0 0 3px rgba(201,162,39,.45); }
+.mesa.llena{ border-color:var(--salvia); }
+.mesa.excede{ border-color:var(--alerta); }
+.mesa .n{ font-family:var(--display); font-size:1.15rem; font-weight:600; }
+.mesa .o{ font-size:.63rem; opacity:.75; margin-top:1px; }
+.mesa.excede .o{ color:var(--alerta); font-weight:600; }
+.mesa.decor{ border-style:dotted; cursor:default; font-size:.62rem; color:var(--rosa-viejo); background:transparent; }
+.mesa.decor:hover{ transform:none; box-shadow:none; }
+
+.detalle{ padding:14px 20px; background:var(--pergamino); border-bottom:1px solid var(--pergamino-2); }
+.detalle h3{ font-size:1.05rem; font-style:italic; }
+.detalle .cupo{ font-size:.72rem; color:var(--rosa-viejo); margin-top:2px; }
+.detalle .sentados{ margin-top:9px; display:flex; flex-wrap:wrap; gap:5px; }
+.pin{ font-size:.68rem; padding:3px 9px; border-radius:11px; color:#fff; display:inline-flex; align-items:center; gap:6px; }
+.pin button{ background:none; border:none; color:#fff; cursor:pointer; font-size:.78rem; opacity:.85; padding:0; line-height:1; }
+.pin button:hover{ opacity:1; }
+
+.barra{ padding:12px 20px; border-bottom:1px solid var(--pergamino-2); }
+.barra input[type=text]{ width:100%; padding:9px 11px; border:1px solid var(--pergamino-2);
+        background:var(--pergamino); font-family:inherit; font-size:.86rem; border-radius:3px; }
+.filtros{ display:flex; gap:6px; margin-top:9px; flex-wrap:wrap; }
+.chip{ font-size:.66rem; padding:4px 11px; border-radius:20px; border:1px solid var(--pergamino-2);
+       background:var(--pergamino); cursor:pointer; color:var(--rosa-viejo); }
+.chip.on{ background:var(--salvia); border-color:var(--salvia); color:#fff; }
+
+.lista{ flex:1; overflow:auto; padding:2px 12px 24px; }
+.grupo{ padding:9px 8px; border-bottom:1px solid var(--pergamino-2); }
+.grupo .fila1{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.grupo .nom{ font-size:.88rem; font-weight:500; flex:1; }
+.grupo .cont{ font-size:.7rem; color:var(--rosa-viejo); white-space:nowrap; }
+.grupo .fila2{ display:flex; align-items:center; gap:6px; margin-top:6px; flex-wrap:wrap; }
+.mini{ width:24px; height:24px; border:1px solid var(--pergamino-2); background:var(--blanco);
+       border-radius:50%; cursor:pointer; font-size:.9rem; line-height:1; color:var(--tinta); }
+.mini:hover:not(:disabled){ border-color:var(--oro); color:var(--oro); }
+.mini:disabled{ opacity:.3; cursor:default; }
+.ubic{ font-size:.66rem; padding:2px 8px; border-radius:10px; color:#fff; }
+.sinmesa{ font-size:.66rem; color:var(--alerta); }
+.grupo.completo{ opacity:.6; }
+
+.vacio{ padding:26px 12px; text-align:center; color:var(--rosa-viejo); font-size:.84rem; }
+.aviso{ position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(16px);
+        background:var(--tinta); color:var(--pergamino); padding:9px 18px; border-radius:4px;
+        font-size:.76rem; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:60; }
+.aviso.ver{ opacity:1; transform:translateX(-50%) translateY(0); }
+.nota{ font-size:.72rem; color:var(--rosa-viejo); padding:10px 20px; }
+@media (max-width:980px){ main{ flex-direction:column; } .col-lista{ max-width:none; width:100%; border-top:1px solid var(--pergamino-2);} .col-plano{ border-right:none; } }
+</style>
+</head>
+<body>
+
+<script>
+const CONFIG = {
+  // Misma URL de Google Apps Script que en index.html y panel-dedicatorias.html
+  urlConfirmaciones: "https://script.google.com/macros/s/AKfycbzq4spw5obSP7GICQUfyru4CRQimiRQBhfPoBoXuSSOpKfI1jYDml6oa0-2EJHh0C9kYQ/exec",
+  capacidadMesa: 10,      // cupo normal
+  excedentePermitido: 1   // una silla extra por mesa => 11
+};
+</script>
+
+<header>
+  <div>
+    <p class="sub">Panel privado</p>
+    <h1>Croquis de mesas</h1>
+  </div>
+  <div class="acciones">
+    <a class="boton" href="panel-dedicatorias.html">&larr; Dedicatorias</a>
+    <button class="boton" id="btn-importar">Importar confirmados</button>
+    <button class="boton boton--solido" id="btn-guardar">Guardar</button>
+  </div>
+</header>
+
+<div class="resumen" id="resumen"></div>
+
+<main>
+  <div class="col-plano">
+    <div class="plano" id="plano"></div>
+    <p class="nota">Elige una mesa y luego usa <strong>+</strong> en la lista para ir sentando personas de cada grupo. Cada persona se acomoda por separado.</p>
+  </div>
+
+  <div class="col-lista">
+    <div class="detalle" id="detalle"><p class="cupo">Selecciona una mesa del croquis para empezar.</p></div>
+    <div class="barra">
+      <input type="text" id="buscar" placeholder="Buscar invitado…">
+      <div class="filtros" id="filtros"></div>
+    </div>
+    <div class="lista" id="lista"></div>
+  </div>
+</main>
+
+<div class="aviso" id="aviso"></div>
+
+<script>
+const SEED = {"mesas": [{"id": "t1", "numero": "1", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 10}, {"id": "t9", "numero": "2", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 10}, {"id": "t17", "numero": "3", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 10}, {"id": "t20", "numero": "4", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 10}, {"id": "t28", "numero": "5", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 10}, {"id": "t2", "numero": "6", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 17}, {"id": "t10", "numero": "7", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 17}, {"id": "t18", "numero": "8", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 17}, {"id": "t21", "numero": "9", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 17}, {"id": "t29", "numero": "10", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 17}, {"id": "t3", "numero": "11", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 24}, {"id": "t11", "numero": "12", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 24}, {"id": "t22", "numero": "13", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 24}, {"id": "t30", "numero": "14", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 24}, {"id": "t4", "numero": "15", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 31}, {"id": "t12", "numero": "16", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 31}, {"id": "t23", "numero": "17", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 31}, {"id": "t5", "numero": "18", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 39}, {"id": "t13", "numero": "19", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 39}, {"id": "t24", "numero": "20", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 39}, {"id": "t6", "numero": "21", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 46}, {"id": "t14", "numero": "22", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 46}, {"id": "t25", "numero": "23", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 46}, {"id": "t31", "numero": "24", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 46}, {"id": "t7", "numero": "25", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 53}, {"id": "t15", "numero": "26", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 53}, {"id": "t26", "numero": "27", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 53}, {"id": "t32", "numero": "28", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 53}, {"id": "t8", "numero": "29", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 60}, {"id": "t16", "numero": "30", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 60}, {"id": "t27", "numero": "31", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 60}, {"id": "t33", "numero": "32", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 60}, {"id": "t19", "numero": "33", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 66}, {"id": "novios", "numero": "Novios", "tipo": "rectangular", "capacidad": 4, "col": "S", "row": 33}, {"id": "pastel", "numero": "Pastel", "tipo": "decor", "capacidad": 0, "col": "T", "row": 30}, {"id": "dulces", "numero": "Dulces", "tipo": "decor", "capacidad": 0, "col": "T", "row": 42}], "grupos": [{"id": "g1", "nombre": "ARGELIA", "total": 2}, {"id": "g2", "nombre": "CARLITOS", "total": 2}, {"id": "g3", "nombre": "CANDIDO", "total": 5}, {"id": "g4", "nombre": "JOSE LUIS", "total": 1}, {"id": "g5", "nombre": "LORENA CARDENAS", "total": 5}, {"id": "g6", "nombre": "HUGO", "total": 5}, {"id": "g7", "nombre": "ALMA DELIA", "total": 5}, {"id": "g8", "nombre": "ALMA BLANCA", "total": 4}, {"id": "g9", "nombre": "ANTONIO", "total": 10}, {"id": "g10", "nombre": "CLAUDIA", "total": 5}, {"id": "g11", "nombre": "ANA BERTHA", "total": 5}, {"id": "g12", "nombre": "FAM. LOZADA", "total": 8}, {"id": "g13", "nombre": "LINA", "total": 2}, {"id": "g14", "nombre": "TERE FRANCO", "total": 8}, {"id": "g15", "nombre": "DANIEL OLGUIN", "total": 2}, {"id": "g16", "nombre": "ROCIO RAMIREZ", "total": 2}, {"id": "g17", "nombre": "ARMANDO ESTRADA", "total": 2}, {"id": "g18", "nombre": "LEO GUTIERREZ", "total": 3}, {"id": "g19", "nombre": "XAVIER PAEZ", "total": 1}, {"id": "g20", "nombre": "MELESIO", "total": 1}, {"id": "g21", "nombre": "MARISELA", "total": 5}, {"id": "g22", "nombre": "ISAI", "total": 4}, {"id": "g23", "nombre": "ZAVALA", "total": 2}, {"id": "g24", "nombre": "EMMA", "total": 5}, {"id": "g25", "nombre": "JEYMI", "total": 3}, {"id": "g26", "nombre": "MAX", "total": 5}, {"id": "g27", "nombre": "ERNESTO", "total": 4}, {"id": "g28", "nombre": "KARINA", "total": 1}, {"id": "g29", "nombre": "JENNYFER", "total": 4}, {"id": "g30", "nombre": "MIGUEL", "total": 4}, {"id": "g31", "nombre": "PETRA", "total": 1}, {"id": "g32", "nombre": "ADELA", "total": 10}, {"id": "g33", "nombre": "JOSE VIDAL", "total": 4}, {"id": "g34", "nombre": "ANGELA", "total": 3}, {"id": "g35", "nombre": "NAHOMI", "total": 3}, {"id": "g36", "nombre": "ARMANDO", "total": 7}, {"id": "g37", "nombre": "KENIA HUERTOS", "total": 4}, {"id": "g38", "nombre": "ARTURO", "total": 2}, {"id": "g39", "nombre": "OSCAR JAVIER", "total": 4}, {"id": "g40", "nombre": "CESAR ALFONSO", "total": 2}, {"id": "g41", "nombre": "LUIS EMMANUEL", "total": 2}, {"id": "g42", "nombre": "ALFONSO CÉSAR", "total": 2}, {"id": "g43", "nombre": "MAURICIO", "total": 1}, {"id": "g44", "nombre": "IRAD", "total": 2}, {"id": "g45", "nombre": "KARLA", "total": 4}, {"id": "g46", "nombre": "SARITA", "total": 2}, {"id": "g47", "nombre": "EDGAR SUASTEGUI", "total": 2}, {"id": "g48", "nombre": "ROSA SALGADO", "total": 2}, {"id": "g49", "nombre": "GARNICA", "total": 4}, {"id": "g50", "nombre": "EDUARDO", "total": 3}, {"id": "g51", "nombre": "SARA REYNA", "total": 3}, {"id": "g52", "nombre": "VERONICA GABRIELA", "total": 5}, {"id": "g53", "nombre": "ROSA FABIOLA", "total": 5}, {"id": "g54", "nombre": "SERGIO", "total": 8}, {"id": "g55", "nombre": "LESLI DEZ", "total": 3}, {"id": "g56", "nombre": "ROBERTO", "total": 4}, {"id": "g57", "nombre": "CLARA", "total": 4}, {"id": "g58", "nombre": "NAHOMI", "total": 2}, {"id": "g59", "nombre": "VICENTE", "total": 5}, {"id": "g60", "nombre": "CANDELARIA", "total": 3}, {"id": "g61", "nombre": "FERNANDA CRUZ", "total": 1}, {"id": "g62", "nombre": "JACINTO LEYTE", "total": 1}, {"id": "g63", "nombre": "DANIEL ZLANDER", "total": 3}, {"id": "g64", "nombre": "ISRAEL", "total": 4}, {"id": "g65", "nombre": "MAX ALEMAN", "total": 1}, {"id": "g66", "nombre": "MIGUEL ADAME", "total": 2}, {"id": "g67", "nombre": "MARIA DE LOS ANGELES", "total": 4}, {"id": "g68", "nombre": "AYDE OLIVOS", "total": 8}, {"id": "g69", "nombre": "CARMEN REYES", "total": 2}, {"id": "g70", "nombre": "GRACIELA", "total": 6}, {"id": "g71", "nombre": "ADRIAN CORONADO", "total": 4}, {"id": "g72", "nombre": "CITLALI", "total": 8}, {"id": "g73", "nombre": "LESLI HDEZ", "total": 2}, {"id": "g74", "nombre": "SAMUEL", "total": 7}, {"id": "g75", "nombre": "LESLI HDEZ", "total": 3}, {"id": "g76", "nombre": "MARÍA VIDAL", "total": 1}, {"id": "g77", "nombre": "MARIANA VISDAL CORONADO", "total": 4}, {"id": "g78", "nombre": "LOURDES CORONADO", "total": 2}, {"id": "g79", "nombre": "RENATA", "total": 9}, {"id": "g80", "nombre": "MESA NOVIOS", "total": 1}, {"id": "g81", "nombre": "YUXZITL", "total": 1}, {"id": "g82", "nombre": "OLAF", "total": 1}, {"id": "g83", "nombre": "CLAUDIA", "total": 1}, {"id": "g84", "nombre": "HILARIO", "total": 1}, {"id": "g85", "nombre": "EDITH", "total": 1}, {"id": "g86", "nombre": "SILVIA", "total": 1}, {"id": "g87", "nombre": "FELIPE ALEJANDRO", "total": 1}], "asign": {"g1": {"t9": 2}, "g2": {"t9": 2}, "g3": {"t9": 5}, "g4": {"t9": 1}, "g5": {"t16": 5}, "g6": {"t16": 5}, "g9": {"t5": 10}, "g10": {"t12": 5}, "g11": {"t12": 5}, "g12": {"t29": 8}, "g13": {"t29": 2}, "g15": {"t33": 2}, "g16": {"t33": 2}, "g17": {"t33": 2}, "g18": {"t33": 3}, "g19": {"t33": 1}, "g20": {"t25": 1}, "g21": {"t25": 5}, "g22": {"t25": 4}, "g26": {"t6": 5}, "g27": {"t6": 4}, "g28": {"t6": 1}, "g32": {"t13": 10}, "g33": {"t20": 4}, "g34": {"t20": 3}, "g35": {"t20": 3}, "g37": {"t27": 4}, "g38": {"t27": 2}, "g39": {"t27": 4}, "g40": {"t31": 2}, "g41": {"t31": 2}, "g42": {"t31": 2}, "g43": {"t31": 1}, "g44": {"t31": 2}, "g45": {"t15": 4}, "g46": {"t15": 2}, "g47": {"t15": 2}, "g48": {"t15": 2}, "g49": {"t7": 4}, "g50": {"t7": 3}, "g51": {"t7": 3}, "g52": {"t22": 5}, "g53": {"t22": 5}, "g54": {"t3": 8}, "g55": {"t3": 3}, "g56": {"t30": 4}, "g57": {"t30": 4}, "g58": {"t30": 2}, "g68": {"t14": 8}, "g69": {"t14": 2}, "g70": {"t17": 6}, "g71": {"t17": 4}, "g74": {"t4": 7}, "g75": {"t4": 3}, "g80": {"novios": 1}, "g81": {"novios": 1}, "g82": {"novios": 1}, "g83": {"novios": 1}, "g84": {"novios": 1}, "g85": {"novios": 1}, "g86": {"novios": 1}, "g87": {"novios": 1}}};
+
+/* 34 colores: uno por mesa (33 invitados + novios) */
+const COLORES = [
+  "#C0504D","#D2691E","#B8860B","#BDB76B","#8FBC5A","#6B8E23","#3CB371","#2E8B78",
+  "#20B2AA","#4A9BB5","#4682B4","#5B7FC4","#6A5ACD","#7B68A6","#8E6FB0","#A050A0",
+  "#B85C9E","#C06090","#C25B7A","#B04A5A","#A85848","#96703C","#8A8340","#7E9145",
+  "#5F9E6A","#4E9B8F","#3F8BA8","#4C79B0","#5E6BA8","#7A5F9E","#94569B","#A85D8C",
+  "#AE5A6E","#7A6A53"
+];
+
+const $ = (id)=>document.getElementById(id);
+const COL_X = {C:1,G:2,K:3,O:4,S:5,T:6};
+const ROW_G = {2:1,10:2,17:3,24:4,31:5,33:5,39:6,46:7,53:8,60:9,66:10,71:11};
+
+let estado = null;
+let mesaSel = null;
+let filtro = "todos";
+let busqueda = "";
+let sucio = false;
+
+const CUPO = CONFIG.capacidadMesa;
+const TOPE = CONFIG.capacidadMesa + CONFIG.excedentePermitido;
+
+/* ---------- utilidades ---------- */
+function esc(t){ const d=document.createElement("div"); d.textContent=t||""; return d.innerHTML; }
+function avisar(m){ const a=$("aviso"); a.textContent=m; a.classList.add("ver");
+  clearTimeout(a._t); a._t=setTimeout(()=>a.classList.remove("ver"),1500); }
+
+function mesasAsiento(){ return estado.mesas.filter(m=>m.tipo!=="decor"); }
+function mesaPorId(id){ return estado.mesas.find(m=>m.id===id); }
+function colorMesa(id){
+  const lista = mesasAsiento();
+  const i = lista.findIndex(m=>m.id===id);
+  if(i<0) return "#999";
+  if(id==="novios") return COLORES[COLORES.length-1];
+  return COLORES[i % (COLORES.length-1)];
+}
+function ocupacion(mesaId){
+  let s=0;
+  for(const gid in estado.asign){ s += (estado.asign[gid][mesaId]||0); }
+  return s;
+}
+function sentadosDe(gid){
+  const m = estado.asign[gid]||{};
+  return Object.values(m).reduce((a,b)=>a+b,0);
+}
+function pendientesDe(gid){
+  const g = estado.grupos.find(x=>x.id===gid);
+  return (g?g.total:0) - sentadosDe(gid);
+}
+
+/* ---------- persistencia ---------- */
+async function cargar(){
+  if(!CONFIG.urlConfirmaciones || CONFIG.urlConfirmaciones.startsWith("PEGA_AQUI")){
+    estado = JSON.parse(JSON.stringify(SEED));
+    avisar("Sin conexión configurada: usando datos locales");
+    render(); return;
+  }
+  try{
+    const r = await fetch(CONFIG.urlConfirmaciones + "?accion=croquis");
+    const d = await r.json();
+    if(d.ok && d.croquis && d.croquis.grupos && d.croquis.grupos.length){
+      estado = d.croquis;
+      if(!estado.mesas || !estado.mesas.length) estado.mesas = JSON.parse(JSON.stringify(SEED.mesas));
+    } else {
+      estado = JSON.parse(JSON.stringify(SEED));
+      avisar("Primera vez: se cargó el acomodo inicial");
+    }
+  }catch(e){
+    estado = JSON.parse(JSON.stringify(SEED));
+    avisar("No se pudo conectar: usando datos locales");
+  }
+  if(!estado.asign) estado.asign = {};
+  render();
+}
+
+async function guardar(){
+  if(!CONFIG.urlConfirmaciones || CONFIG.urlConfirmaciones.startsWith("PEGA_AQUI")){
+    avisar("Falta configurar la URL para poder guardar"); return;
+  }
+  $("btn-guardar").disabled = true;
+  try{
+    const r = await fetch(CONFIG.urlConfirmaciones,{
+      method:"POST", headers:{"Content-Type":"text/plain"},
+      body: JSON.stringify({ accion:"guardarCroquis", croquis: estado })
+    });
+    const d = await r.json();
+    if(d.ok){ sucio=false; avisar("Acomodo guardado"); }
+    else avisar(d.error || "No se pudo guardar");
+  }catch(e){ avisar("No se pudo guardar: sin conexión"); }
+  $("btn-guardar").disabled = false;
+  renderResumen();
+}
+
+/* Trae los confirmados y los agrega como grupos nuevos (sin duplicar) */
+async function importar(){
+  if(!CONFIG.urlConfirmaciones || CONFIG.urlConfirmaciones.startsWith("PEGA_AQUI")){
+    avisar("Falta configurar la URL"); return;
+  }
+  try{
+    const r = await fetch(CONFIG.urlConfirmaciones + "?accion=listar");
+    const d = await r.json();
+    if(!d.ok){ avisar("No se pudieron leer las confirmaciones"); return; }
+    const existentes = new Set(estado.grupos.map(g=>g.nombre.trim().toUpperCase()));
+    let nuevos = 0;
+    (d.confirmaciones||[]).forEach(c=>{
+      if(c.asiste !== "Sí") return;
+      const nom = (c.nombre||"").trim();
+      if(!nom || existentes.has(nom.toUpperCase())) return;
+      estado.grupos.push({ id:"c"+Date.now()+"_"+nuevos, nombre:nom, total:Number(c.pases)||1, origen:"confirmacion" });
+      existentes.add(nom.toUpperCase());
+      nuevos++;
+    });
+    if(nuevos){ sucio=true; avisar(nuevos+" invitado(s) importado(s)"); render(); }
+    else avisar("No hay confirmados nuevos");
+  }catch(e){ avisar("No se pudo conectar"); }
+}
+
+/* ---------- acciones ---------- */
+function sentar(gid){
+  if(!mesaSel){ avisar("Primero elige una mesa"); return; }
+  if(pendientesDe(gid)<=0) return;
+  const m = mesaPorId(mesaSel);
+  const tope = (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
+  if(ocupacion(mesaSel) >= tope){ avisar("Esa mesa ya llegó a su tope de "+tope); return; }
+  if(!estado.asign[gid]) estado.asign[gid] = {};
+  estado.asign[gid][mesaSel] = (estado.asign[gid][mesaSel]||0)+1;
+  sucio=true; render();
+}
+function levantar(gid, mesaId){
+  const m = estado.asign[gid]; if(!m || !m[mesaId]) return;
+  m[mesaId]--;
+  if(m[mesaId]<=0) delete m[mesaId];
+  if(Object.keys(m).length===0) delete estado.asign[gid];
+  sucio=true; render();
+}
+function vaciarMesa(mesaId){
+  for(const gid in estado.asign){
+    if(estado.asign[gid][mesaId]){
+      delete estado.asign[gid][mesaId];
+      if(Object.keys(estado.asign[gid]).length===0) delete estado.asign[gid];
+    }
+  }
+  sucio=true; render();
+}
+
+/* ---------- render ---------- */
+function render(){ renderResumen(); renderPlano(); renderDetalle(); renderFiltros(); renderLista(); }
+
+function renderResumen(){
+  const total = estado.grupos.reduce((s,g)=>s+g.total,0);
+  const sentados = estado.grupos.reduce((s,g)=>s+sentadosDe(g.id),0);
+  const redondas = estado.mesas.filter(m=>m.tipo==="redonda");
+  const usadas = redondas.filter(m=>ocupacion(m.id)>0).length;
+  const excede = mesasAsiento().filter(m=>{
+    const t = (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
+    return ocupacion(m.id) > t;
+  }).length;
+  $("resumen").innerHTML = `
+    <div class="dato"><div class="num">${total}</div><div class="lbl">Personas en total</div></div>
+    <div class="dato"><div class="num">${sentados}</div><div class="lbl">Ya sentadas</div></div>
+    <div class="dato ${total-sentados>0?"alerta":""}"><div class="num">${total-sentados}</div><div class="lbl">Sin lugar</div></div>
+    <div class="dato"><div class="num">${usadas} / ${redondas.length}</div><div class="lbl">Mesas en uso</div></div>
+    <div class="dato ${excede>0?"alerta":""}"><div class="num">${excede}</div><div class="lbl">Mesas pasadas de tope</div></div>
+    <div class="dato"><div class="num" style="font-size:1rem;padding-top:7px">${sucio?"Sin guardar":"Guardado"}</div><div class="lbl">Estado</div></div>
+  `;
+}
+
+function renderPlano(){
+  const p = $("plano"); p.innerHTML="";
+  const ent = document.createElement("div");
+  ent.className="rotulo"; ent.textContent="ENTRADA DEL SALÓN";
+  ent.style.gridColumn="2 / span 3"; ent.style.gridRow=1; p.appendChild(ent);
+  const esc2 = document.createElement("div");
+  esc2.className="rotulo"; esc2.textContent="ESCENARIO";
+  esc2.style.gridColumn="2 / span 3"; esc2.style.gridRow=11; p.appendChild(esc2);
+
+  estado.mesas.forEach(m=>{
+    const d = document.createElement("div");
+    const decor = m.tipo==="decor";
+    d.className = "mesa " + (m.tipo==="redonda"?"redonda":m.tipo==="rectangular"?"rectangular":"decor");
+    d.style.gridColumn = COL_X[m.col];
+    d.style.gridRow = (m.id==="novios") ? `${ROW_G[m.row]} / span 2` : ROW_G[m.row];
+
+    if(decor){
+      d.innerHTML = `<div class="n" style="font-size:.7rem">${esc(m.numero)}</div>`;
+    } else {
+      const occ = ocupacion(m.id);
+      const tope = (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
+      const cupo = (m.id==="novios") ? (m.capacidad||CUPO) : CUPO;
+      if(occ>0){
+        d.style.background = colorMesa(m.id);
+        d.style.color = "#fff";
+        d.classList.add("llena");
+      }
+      if(occ>tope) d.classList.add("excede");
+      if(m.id===mesaSel) d.classList.add("sel");
+      d.innerHTML = `<div class="n">${esc(m.numero)}</div><div class="o">${occ}/${cupo}</div>`;
+      d.addEventListener("click", ()=>{ mesaSel = (mesaSel===m.id)?null:m.id; render(); });
+    }
+    p.appendChild(d);
+  });
+}
+
+function renderDetalle(){
+  const c = $("detalle");
+  if(!mesaSel){ c.innerHTML = `<p class="cupo">Selecciona una mesa del croquis para empezar.</p>`; return; }
+  const m = mesaPorId(mesaSel);
+  const occ = ocupacion(mesaSel);
+  const cupo = (m.id==="novios") ? (m.capacidad||CUPO) : CUPO;
+  const tope = (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
+  const col = colorMesa(mesaSel);
+
+  const pins = estado.grupos.filter(g=>(estado.asign[g.id]||{})[mesaSel])
+    .map(g=>`<span class="pin" style="background:${col}">${esc(g.nombre)} · ${estado.asign[g.id][mesaSel]}
+      <button title="Quitar uno" data-quitar="${g.id}">−</button></span>`).join("");
+
+  c.innerHTML = `
+    <h3><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${col};margin-right:7px"></span>
+      Mesa ${esc(m.numero)}</h3>
+    <p class="cupo">${occ} de ${cupo} lugares${occ>cupo?` · ${occ-cupo} de excedente`:""}${occ>tope?" · PASADA DE TOPE":""}</p>
+    <div class="sentados">${pins || '<span class="cupo">Todavía no hay nadie sentado aquí.</span>'}</div>
+    ${occ>0?`<button class="boton chico" id="btn-vaciar" style="margin-top:10px">Vaciar mesa</button>`:""}
+  `;
+  c.querySelectorAll("[data-quitar]").forEach(b=>
+    b.addEventListener("click", ()=>levantar(b.dataset.quitar, mesaSel)));
+  const bv = $("btn-vaciar");
+  if(bv) bv.addEventListener("click", ()=>vaciarMesa(mesaSel));
+}
+
+function renderFiltros(){
+  const f = [["todos","Todos"],["pendientes","Con pendientes"],["sentados","Ya sentados"]];
+  $("filtros").innerHTML = f.map(([k,l])=>`<span class="chip ${filtro===k?"on":""}" data-f="${k}">${l}</span>`).join("");
+  $("filtros").querySelectorAll("[data-f]").forEach(c=>
+    c.addEventListener("click", ()=>{ filtro=c.dataset.f; renderFiltros(); renderLista(); }));
+}
+
+function renderLista(){
+  let gs = estado.grupos.slice();
+  if(busqueda) gs = gs.filter(g=>g.nombre.toLowerCase().includes(busqueda));
+  if(filtro==="pendientes") gs = gs.filter(g=>pendientesDe(g.id)>0);
+  if(filtro==="sentados")   gs = gs.filter(g=>sentadosDe(g.id)>0);
+
+  if(!gs.length){ $("lista").innerHTML = `<p class="vacio">Sin resultados.</p>`; return; }
+
+  $("lista").innerHTML = gs.map(g=>{
+    const pend = pendientesDe(g.id);
+    const mapa = estado.asign[g.id]||{};
+    const ubic = Object.keys(mapa).map(mid=>{
+      const mm = mesaPorId(mid);
+      return `<span class="ubic" style="background:${colorMesa(mid)}">Mesa ${esc(mm?mm.numero:"?")} · ${mapa[mid]}
+        <button class="mini" style="width:16px;height:16px;border:none;background:transparent;color:#fff;font-size:.7rem"
+                data-quitar="${g.id}" data-mesa="${mid}" title="Quitar uno">−</button></span>`;
+    }).join("");
+    return `<div class="grupo ${pend===0?"completo":""}">
+      <div class="fila1">
+        <span class="nom">${esc(g.nombre)}</span>
+        <span class="cont">${sentadosDe(g.id)}/${g.total}</span>
+      </div>
+      <div class="fila2">
+        <button class="mini" data-sentar="${g.id}" ${pend<=0||!mesaSel?"disabled":""} title="Sentar uno en la mesa elegida">+</button>
+        ${ubic || (pend>0?`<span class="sinmesa">${pend} sin lugar</span>`:"")}
+      </div>
+    </div>`;
+  }).join("");
+
+  $("lista").querySelectorAll("[data-sentar]").forEach(b=>
+    b.addEventListener("click", ()=>sentar(b.dataset.sentar)));
+  $("lista").querySelectorAll("[data-quitar][data-mesa]").forEach(b=>
+    b.addEventListener("click", ()=>levantar(b.dataset.quitar, b.dataset.mesa)));
+}
+
+/* ---------- eventos ---------- */
+$("buscar").addEventListener("input", e=>{ busqueda = e.target.value.trim().toLowerCase(); renderLista(); });
+$("btn-guardar").addEventListener("click", guardar);
+$("btn-importar").addEventListener("click", importar);
+window.addEventListener("beforeunload", e=>{ if(sucio){ e.preventDefault(); e.returnValue=""; } });
+
+cargar();
+</script>
+</body>
+</html>
