@@ -14,12 +14,24 @@
   --rosa-viejo:#A6822C; --oro:#C9A227; --salvia:#8B9A5B; --alerta:#B3413C;
   --display:"Fraunces",serif; --texto:"Jost",sans-serif;
   --sombra:0 14px 34px -16px rgba(51,57,31,.35);
+  --celda:84px;
 }
+/* --celda se encoge en pantallas chicas para que el croquis nunca pida scroll
+   horizontal (el .col-plano se queda con overflow:auto como red de seguridad). */
+@media (max-width:1250px){ :root{ --celda:70px; } }
+@media (max-width:1050px){ :root{ --celda:60px; } }
+@media (max-width:980px){  :root{ --celda:64px; } }
+@media (max-width:700px){  :root{ --celda:54px; } }
+@media (max-width:480px){  :root{ --celda:46px; } }
+@media (max-width:380px){  :root{ --celda:40px; } }
+@media (max-width:340px){  :root{ --celda:36px; } }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{ font-family:var(--texto); background:var(--pergamino); color:var(--tinta); font-size:14px; }
+html,body{ height:100%; }
+body{ font-family:var(--texto); background:var(--pergamino); color:var(--tinta); font-size:14px;
+      display:flex; flex-direction:column; height:100vh; overflow:hidden; }
 h1,h2,h3{ font-family:var(--display); font-weight:500; }
 
-header{ padding:22px 26px 16px; border-bottom:1px solid var(--pergamino-2); display:flex;
+header{ flex:0 0 auto; padding:22px 26px 16px; border-bottom:1px solid var(--pergamino-2); display:flex;
         align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; background:var(--blanco); }
 header h1{ font-size:1.7rem; font-style:italic; }
 header .sub{ font-size:.76rem; color:var(--rosa-viejo); letter-spacing:.14em; text-transform:uppercase; }
@@ -34,7 +46,7 @@ header .sub{ font-size:.76rem; color:var(--rosa-viejo); letter-spacing:.14em; te
 .boton:disabled{ opacity:.35; cursor:default; }
 .boton.chico{ padding:5px 10px; font-size:.64rem; }
 
-.resumen{ display:flex; flex-wrap:wrap; gap:0; padding:13px 26px; background:var(--blanco);
+.resumen{ flex:0 0 auto; display:flex; flex-wrap:wrap; gap:0; padding:13px 26px; background:var(--blanco);
           border-bottom:1px solid var(--pergamino-2); }
 .dato{ padding:2px 24px 2px 0; margin-right:24px; border-right:1px solid var(--pergamino-2); }
 .dato:last-child{ border-right:none; }
@@ -42,13 +54,13 @@ header .sub{ font-size:.76rem; color:var(--rosa-viejo); letter-spacing:.14em; te
 .dato .lbl{ font-size:.63rem; color:var(--rosa-viejo); letter-spacing:.08em; text-transform:uppercase; margin-top:2px; }
 .dato.alerta .num{ color:var(--alerta); }
 
-main{ display:flex; align-items:flex-start; gap:0; }
-.col-plano{ flex:1.3; padding:20px 18px 50px 26px; overflow:auto; border-right:1px solid var(--pergamino-2); }
-.col-lista{ flex:1; min-width:340px; max-width:460px; background:var(--blanco); align-self:stretch;
+main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; overflow:hidden; }
+.col-plano{ flex:1.3; min-width:0; min-height:0; padding:20px 18px 30px 26px; overflow:auto; border-right:1px solid var(--pergamino-2); }
+.col-lista{ flex:1; min-width:0; min-height:0; max-width:460px; background:var(--blanco); align-self:stretch;
             display:flex; flex-direction:column; }
 
-.plano{ display:grid; grid-template-columns:repeat(6,84px); grid-template-rows:30px repeat(9,84px) 36px;
-        gap:9px 20px; justify-content:start; padding:4px; min-width:600px; }
+.plano{ display:grid; grid-template-columns:repeat(6,var(--celda)); grid-template-rows:28px repeat(9,var(--celda)) 32px;
+        gap:calc(var(--celda)*.11) calc(var(--celda)*.24); justify-content:start; padding:4px; width:max-content; }
 .rotulo{ display:flex; align-items:center; justify-content:center; font-size:.62rem; letter-spacing:.1em;
          color:var(--rosa-viejo); border:1px dashed var(--pergamino-2); border-radius:6px; }
 .mesa{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -56,12 +68,16 @@ main{ display:flex; align-items:flex-start; gap:0; }
        transition:transform .12s, box-shadow .12s; user-select:none; }
 .mesa.redonda{ border-radius:50%; }
 .mesa.rectangular{ border-radius:8px; }
+.mesa.redonda, .mesa.rectangular{ cursor:grab; touch-action:none; }
 .mesa:hover{ transform:translateY(-2px); box-shadow:0 6px 14px rgba(51,57,31,.16); }
 .mesa.sel{ box-shadow:0 0 0 3px rgba(201,162,39,.45); }
 .mesa.llena{ border-color:var(--salvia); }
 .mesa.excede{ border-color:var(--alerta); }
-.mesa .n{ font-family:var(--display); font-size:1.15rem; font-weight:600; }
-.mesa .o{ font-size:.63rem; opacity:.75; margin-top:1px; }
+.mesa.arrastrando{ opacity:.45; cursor:grabbing; }
+.mesa.objetivo-ok{ box-shadow:0 0 0 4px rgba(139,154,91,.8) !important; }
+.mesa.objetivo-mal{ box-shadow:0 0 0 4px rgba(179,65,60,.8) !important; }
+.mesa .n{ font-family:var(--display); font-size:calc(var(--celda)*.205); font-weight:600; }
+.mesa .o{ font-size:calc(var(--celda)*.12); opacity:.75; margin-top:1px; }
 .mesa.excede .o{ color:var(--alerta); font-weight:600; }
 .mesa.decor{ border-style:dotted; cursor:default; font-size:.62rem; color:var(--rosa-viejo); background:transparent; }
 .mesa.decor:hover{ transform:none; box-shadow:none; }
@@ -73,6 +89,11 @@ main{ display:flex; align-items:flex-start; gap:0; }
 .pin{ font-size:.68rem; padding:3px 9px; border-radius:11px; color:#fff; display:inline-flex; align-items:center; gap:6px; }
 .pin button{ background:none; border:none; color:#fff; cursor:pointer; font-size:.78rem; opacity:.85; padding:0; line-height:1; }
 .pin button:hover{ opacity:1; }
+.pin select.mover, .ubic select.mover-mini{
+  background:rgba(255,255,255,.28); color:#fff; border:none; border-radius:9px;
+  font-family:inherit; font-size:.62rem; padding:2px 4px; cursor:pointer; max-width:120px;
+}
+.pin select.mover option, .ubic select.mover-mini option{ color:#000; }
 
 .barra{ padding:12px 20px; border-bottom:1px solid var(--pergamino-2); }
 .barra input[type=text]{ width:100%; padding:9px 11px; border:1px solid var(--pergamino-2);
@@ -82,7 +103,7 @@ main{ display:flex; align-items:flex-start; gap:0; }
        background:var(--pergamino); cursor:pointer; color:var(--rosa-viejo); }
 .chip.on{ background:var(--salvia); border-color:var(--salvia); color:#fff; }
 
-.lista{ flex:1; overflow:auto; padding:2px 12px 24px; }
+.lista{ flex:1; min-height:0; overflow:auto; padding:2px 12px 24px; }
 .grupo{ padding:9px 8px; border-bottom:1px solid var(--pergamino-2); }
 .grupo .fila1{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .grupo .nom{ font-size:.88rem; font-weight:500; flex:1; }
@@ -102,7 +123,23 @@ main{ display:flex; align-items:flex-start; gap:0; }
         font-size:.76rem; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:60; }
 .aviso.ver{ opacity:1; transform:translateX(-50%) translateY(0); }
 .nota{ font-size:.72rem; color:var(--rosa-viejo); padding:10px 20px; }
-@media (max-width:980px){ main{ flex-direction:column; } .col-lista{ max-width:none; width:100%; border-top:1px solid var(--pergamino-2);} .col-plano{ border-right:none; } }
+@media (max-width:980px){
+  main{ flex-direction:column; }
+  .col-plano{ flex:1 1 50%; min-height:0; border-right:none; border-bottom:1px solid var(--pergamino-2); padding:14px 12px 20px; }
+  .col-lista{ flex:1 1 50%; min-height:0; max-width:none; width:100%; }
+}
+/* En pantallas chicas el encabezado y el resumen de números se comprimen
+   para dejarle la mayor parte de la altura al plano y a la lista. */
+@media (max-width:600px){
+  header{ padding:12px 16px 8px; gap:8px 12px; }
+  header h1{ font-size:1.3rem; }
+  .acciones{ gap:6px; }
+  .boton{ padding:6px 10px; font-size:.62rem; }
+  .resumen{ padding:8px 16px; display:grid; grid-template-columns:repeat(3,1fr); gap:6px 8px; }
+  .dato{ padding:0; margin:0; border-right:none; }
+  .dato .num{ font-size:1.05rem; }
+  .dato .lbl{ font-size:.54rem; }
+}
 </style>
 </head>
 <body>
@@ -133,7 +170,7 @@ const CONFIG = {
 <main>
   <div class="col-plano">
     <div class="plano" id="plano"></div>
-    <p class="nota">Elige una mesa y luego usa <strong>+</strong> en la lista para ir sentando personas de cada grupo. Cada persona se acomoda por separado.</p>
+    <p class="nota">Elige una mesa y usa <strong>+</strong> en la lista para sentar personas una por una, o <strong>"Mover a…"</strong> para mover a un grupo completo de un jalón. Para intercambiar dos mesas enteras, arrastra una encima de la otra.</p>
   </div>
 
   <div class="col-lista">
@@ -295,6 +332,119 @@ function vaciarMesa(mesaId){
   }
   sucio=true; render();
 }
+function topeDe(mesaId){
+  const m = mesaPorId(mesaId);
+  return (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
+}
+/* Mueve de un jalón todo lo que un grupo tiene sentado en `origenId` hacia
+   `destinoId`. Si no cabe completo, mueve lo que quepa y deja el resto donde
+   estaba (nunca se pierde gente). Así, reacomodar a una familia que ya estaba
+   sentada es un solo cambio en vez de quitar y volver a sentar uno por uno. */
+function moverGrupo(gid, origenId, destinoId){
+  if(!destinoId || origenId===destinoId) return;
+  const cantidad = (estado.asign[gid]||{})[origenId] || 0;
+  if(cantidad<=0) return;
+  const libres = topeDe(destinoId) - ocupacion(destinoId);
+  if(libres<=0){ avisar("Esa mesa ya llegó a su tope"); render(); return; }
+  const mover = Math.min(cantidad, libres);
+
+  estado.asign[gid][origenId] -= mover;
+  if(estado.asign[gid][origenId]<=0) delete estado.asign[gid][origenId];
+  estado.asign[gid][destinoId] = (estado.asign[gid][destinoId]||0) + mover;
+  if(Object.keys(estado.asign[gid]).length===0) delete estado.asign[gid];
+
+  const g = estado.grupos.find(x=>x.id===gid);
+  const destMesa = mesaPorId(destinoId), origenMesa = mesaPorId(origenId);
+  avisar(mover<cantidad
+    ? `Se movieron ${mover} de ${g.nombre} a la mesa ${destMesa.numero} (quedaron ${cantidad-mover} en la mesa ${origenMesa.numero})`
+    : `${g.nombre} se movió completo a la mesa ${destMesa.numero}`);
+  sucio=true; render();
+}
+function opcionesMover(origenId){
+  return mesasAsiento().filter(m=>m.id!==origenId).map(m=>{
+    const libres = topeDe(m.id) - ocupacion(m.id);
+    if(libres<=0) return null;
+    return `<option value="${m.id}">Mesa ${esc(m.numero)} (${libres} libre${libres===1?"":"s"})</option>`;
+  }).filter(Boolean).join("");
+}
+
+/* ---------- arrastrar una mesa encima de otra para intercambiarlas ----------
+   Pointer Events (no la API clásica de drag de HTML5, que no funciona en
+   celulares): el mismo código sirve para mouse, lápiz y dedo. Un movimiento
+   corto se trata como clic normal (selecciona la mesa); solo si el puntero se
+   desplaza más de 8px se considera arrastre. */
+let arrastre = null;
+
+function puedeIntercambiarMesas(aId, bId){
+  const ma = mesaPorId(aId), mb = mesaPorId(bId);
+  if(!ma || !mb || ma.tipo==="decor" || mb.tipo==="decor") return false;
+  return ocupacion(bId) <= topeDe(aId) && ocupacion(aId) <= topeDe(bId);
+}
+
+function intercambiarMesas(aId, bId){
+  if(!puedeIntercambiarMesas(aId,bId)){ avisar("No caben completos si se intercambian esas mesas"); return; }
+  for(const gid in estado.asign){
+    const mapa = estado.asign[gid];
+    const a = mapa[aId]||0, b = mapa[bId]||0;
+    if(!a && !b) continue;
+    if(b) mapa[aId]=b; else delete mapa[aId];
+    if(a) mapa[bId]=a; else delete mapa[bId];
+  }
+  const ma = mesaPorId(aId), mb = mesaPorId(bId);
+  if(mesaSel===aId) mesaSel=bId; else if(mesaSel===bId) mesaSel=aId;
+  sucio = true;
+  avisar(`Se intercambiaron los invitados de la mesa ${ma.numero} y la mesa ${mb.numero}`);
+  render();
+}
+
+function iniciarArrastreMesa(e, el, mesaId){
+  if(e.pointerType==="mouse" && e.button!==0) return;
+  arrastre = { origenId: mesaId, origenEl: el, startX:e.clientX, startY:e.clientY, moviendo:false, hoverEl:null };
+  el.setPointerCapture(e.pointerId);
+  el.addEventListener("pointermove", moverArrastreMesa);
+  el.addEventListener("pointerup", soltarArrastreMesa, {once:true});
+  el.addEventListener("pointercancel", cancelarArrastreMesa, {once:true});
+}
+function moverArrastreMesa(e){
+  if(!arrastre) return;
+  const dx=e.clientX-arrastre.startX, dy=e.clientY-arrastre.startY;
+  if(!arrastre.moviendo && Math.hypot(dx,dy) > 8){
+    arrastre.moviendo = true;
+    arrastre.origenEl.classList.add("arrastrando");
+  }
+  if(!arrastre.moviendo) return;
+  const bajo = document.elementFromPoint(e.clientX, e.clientY);
+  const mesaEl = bajo && bajo.closest(".mesa[data-mesa-id]");
+  const destinoValido = (mesaEl && mesaEl.dataset.mesaId!==arrastre.origenId) ? mesaEl : null;
+  if(destinoValido !== arrastre.hoverEl){
+    if(arrastre.hoverEl) arrastre.hoverEl.classList.remove("objetivo-ok","objetivo-mal");
+    arrastre.hoverEl = destinoValido;
+    if(destinoValido){
+      const ok = puedeIntercambiarMesas(arrastre.origenId, destinoValido.dataset.mesaId);
+      destinoValido.classList.add(ok?"objetivo-ok":"objetivo-mal");
+    }
+  }
+}
+function soltarArrastreMesa(e){
+  if(!arrastre) return;
+  arrastre.origenEl.removeEventListener("pointermove", moverArrastreMesa);
+  arrastre.origenEl.classList.remove("arrastrando");
+  if(arrastre.hoverEl) arrastre.hoverEl.classList.remove("objetivo-ok","objetivo-mal");
+  const { moviendo, hoverEl, origenId } = arrastre;
+  arrastre = null;
+  if(moviendo){
+    if(hoverEl) intercambiarMesas(origenId, hoverEl.dataset.mesaId);
+  } else {
+    mesaSel = (mesaSel===origenId) ? null : origenId;
+    render();
+  }
+}
+function cancelarArrastreMesa(){
+  if(!arrastre) return;
+  arrastre.origenEl.classList.remove("arrastrando");
+  if(arrastre.hoverEl) arrastre.hoverEl.classList.remove("objetivo-ok","objetivo-mal");
+  arrastre = null;
+}
 
 /* ---------- render ---------- */
 function render(){ renderResumen(); renderPlano(); renderDetalle(); renderFiltros(); renderLista(); }
@@ -348,7 +498,8 @@ function renderPlano(){
       if(occ>tope) d.classList.add("excede");
       if(m.id===mesaSel) d.classList.add("sel");
       d.innerHTML = `<div class="n">${esc(m.numero)}</div><div class="o">${occ}/${cupo}</div>`;
-      d.addEventListener("click", ()=>{ mesaSel = (mesaSel===m.id)?null:m.id; render(); });
+      d.dataset.mesaId = m.id;
+      d.addEventListener("pointerdown", e=>iniciarArrastreMesa(e, d, m.id));
     }
     p.appendChild(d);
   });
@@ -365,7 +516,10 @@ function renderDetalle(){
 
   const pins = estado.grupos.filter(g=>(estado.asign[g.id]||{})[mesaSel])
     .map(g=>`<span class="pin" style="background:${col}">${esc(g.nombre)} · ${estado.asign[g.id][mesaSel]}
-      <button title="Quitar uno" data-quitar="${g.id}">−</button></span>`).join("");
+      <button title="Quitar uno" data-quitar="${g.id}">−</button>
+      <select class="mover" data-mover="${g.id}" data-origen="${mesaSel}" title="Mover todo el grupo a otra mesa">
+        <option value="">Mover a…</option>${opcionesMover(mesaSel)}
+      </select></span>`).join("");
 
   c.innerHTML = `
     <h3><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${col};margin-right:7px"></span>
@@ -376,6 +530,8 @@ function renderDetalle(){
   `;
   c.querySelectorAll("[data-quitar]").forEach(b=>
     b.addEventListener("click", ()=>levantar(b.dataset.quitar, mesaSel)));
+  c.querySelectorAll("[data-mover]").forEach(s=>
+    s.addEventListener("change", ()=>{ if(s.value) moverGrupo(s.dataset.mover, s.dataset.origen, s.value); }));
   const bv = $("btn-vaciar");
   if(bv) bv.addEventListener("click", ()=>vaciarMesa(mesaSel));
 }
@@ -402,7 +558,10 @@ function renderLista(){
       const mm = mesaPorId(mid);
       return `<span class="ubic" style="background:${colorMesa(mid)}">Mesa ${esc(mm?mm.numero:"?")} · ${mapa[mid]}
         <button class="mini" style="width:16px;height:16px;border:none;background:transparent;color:#fff;font-size:.7rem"
-                data-quitar="${g.id}" data-mesa="${mid}" title="Quitar uno">−</button></span>`;
+                data-quitar="${g.id}" data-mesa="${mid}" title="Quitar uno">−</button>
+        <select class="mover-mini" data-mover="${g.id}" data-origen="${mid}" title="Mover todo el grupo a otra mesa">
+          <option value="">➜ mover</option>${opcionesMover(mid)}
+        </select></span>`;
     }).join("");
     return `<div class="grupo ${pend===0?"completo":""}">
       <div class="fila1">
@@ -420,6 +579,8 @@ function renderLista(){
     b.addEventListener("click", ()=>sentar(b.dataset.sentar)));
   $("lista").querySelectorAll("[data-quitar][data-mesa]").forEach(b=>
     b.addEventListener("click", ()=>levantar(b.dataset.quitar, b.dataset.mesa)));
+  $("lista").querySelectorAll("[data-mover]").forEach(s=>
+    s.addEventListener("change", ()=>{ if(s.value) moverGrupo(s.dataset.mover, s.dataset.origen, s.value); }));
 }
 
 /* ---------- eventos ---------- */
