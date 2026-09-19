@@ -55,7 +55,7 @@ header .sub{ font-size:.76rem; color:var(--rosa-viejo); letter-spacing:.14em; te
 .dato.alerta .num{ color:var(--alerta); }
 
 main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; overflow:hidden; }
-.col-plano{ flex:1.3; min-width:0; min-height:0; padding:20px 18px 30px 26px; overflow:auto; border-right:1px solid var(--pergamino-2); }
+.col-plano{ flex:1.3; min-width:0; min-height:0; padding:16px 18px 10px 20px; overflow:auto; border-right:1px solid var(--pergamino-2); }
 .col-lista{ flex:1; min-width:0; min-height:0; max-width:460px; background:var(--blanco); align-self:stretch;
             display:flex; flex-direction:column; }
 
@@ -94,6 +94,14 @@ main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; ove
   font-family:inherit; font-size:.62rem; padding:2px 4px; cursor:pointer; max-width:120px;
 }
 .pin select.mover option, .ubic select.mover-mini option{ color:#000; }
+.pin .cuerpo, .ubic .cuerpo{ cursor:grab; touch-action:none; }
+.pin .ficha, .ubic .ficha{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:16px; height:16px; border-radius:50%; background:rgba(255,255,255,.35);
+  font-size:.6rem; font-weight:600; cursor:grab; touch-action:none; flex:0 0 auto;
+}
+.pin .cuerpo.arrastrando, .ubic .cuerpo.arrastrando,
+.pin .ficha.arrastrando, .ubic .ficha.arrastrando{ opacity:.4; cursor:grabbing; }
 
 .barra{ padding:12px 20px; border-bottom:1px solid var(--pergamino-2); }
 .barra input[type=text]{ width:100%; padding:9px 11px; border:1px solid var(--pergamino-2);
@@ -113,7 +121,7 @@ main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; ove
        border-radius:50%; cursor:pointer; font-size:.9rem; line-height:1; color:var(--tinta); }
 .mini:hover:not(:disabled){ border-color:var(--oro); color:var(--oro); }
 .mini:disabled{ opacity:.3; cursor:default; }
-.ubic{ font-size:.66rem; padding:2px 8px; border-radius:10px; color:#fff; }
+.ubic{ font-size:.66rem; padding:2px 8px; border-radius:10px; color:#fff; display:inline-flex; align-items:center; gap:4px; }
 .sinmesa{ font-size:.66rem; color:var(--alerta); }
 .grupo.completo{ opacity:.6; }
 
@@ -122,11 +130,17 @@ main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; ove
         background:var(--tinta); color:var(--pergamino); padding:9px 18px; border-radius:4px;
         font-size:.76rem; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:60; }
 .aviso.ver{ opacity:1; transform:translateX(-50%) translateY(0); }
-.nota{ font-size:.72rem; color:var(--rosa-viejo); padding:10px 20px; }
+.nota{ font-size:.7rem; color:var(--rosa-viejo); padding:6px 4px 0; }
+.tabs-mobile{ display:none; }
 @media (max-width:980px){
   main{ flex-direction:column; }
-  .col-plano{ flex:1 1 50%; min-height:0; border-right:none; border-bottom:1px solid var(--pergamino-2); padding:14px 12px 20px; }
-  .col-lista{ flex:1 1 50%; min-height:0; max-width:none; width:100%; }
+  .col-plano{ flex:1.15 1 0; min-height:0; border-right:none; border-bottom:1px solid var(--pergamino-2); padding:10px 12px 6px; }
+  .col-lista{ flex:1 1 0; min-height:0; max-width:none; width:100%; }
+  .tabs-mobile{ display:flex; gap:6px; padding:8px 16px 0; flex-wrap:wrap; background:var(--blanco); }
+  main.modo-croquis .col-plano{ flex:1 1 85%; }
+  main.modo-croquis .col-lista{ flex:1 1 15%; }
+  main.modo-lista .col-plano{ flex:1 1 15%; }
+  main.modo-lista .col-lista{ flex:1 1 85%; }
 }
 /* En pantallas chicas el encabezado y el resumen de números se comprimen
    para dejarle la mayor parte de la altura al plano y a la lista. */
@@ -161,16 +175,25 @@ const CONFIG = {
   <div class="acciones">
     <a class="boton" href="index.html">&larr; Dedicatorias</a>
     <button class="boton" id="btn-importar">Importar confirmados</button>
+    <button class="boton" id="btn-agregar-mesa">+ Agregar mesa</button>
+    <button class="boton" id="btn-reiniciar" title="Quitar a todos los invitados de sus mesas">Reiniciar acomodo</button>
+    <button class="boton" id="btn-deshacer" disabled title="Deshacer el último cambio">↶ Deshacer</button>
     <button class="boton boton--solido" id="btn-guardar">Guardar</button>
   </div>
 </header>
 
 <div class="resumen" id="resumen"></div>
 
+<div class="tabs-mobile" id="tabs-mobile">
+  <button class="chip on" data-modo="dividido">Dividido</button>
+  <button class="chip" data-modo="croquis">Ampliar croquis</button>
+  <button class="chip" data-modo="lista">Ampliar lista</button>
+</div>
+
 <main>
   <div class="col-plano">
     <div class="plano" id="plano"></div>
-    <p class="nota">Elige una mesa y usa <strong>+</strong> en la lista para sentar personas una por una, o <strong>"Mover a…"</strong> para mover a un grupo completo de un jalón. Para intercambiar dos mesas enteras, arrastra una encima de la otra.</p>
+    <p class="nota">Arrastra invitados o mesas para reacomodarlos. La fichita "1" mueve a una sola persona.</p>
   </div>
 
   <div class="col-lista">
@@ -186,7 +209,7 @@ const CONFIG = {
 <div class="aviso" id="aviso"></div>
 
 <script>
-const SEED = {"mesas": [{"id": "t1", "numero": "1", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 10}, {"id": "t9", "numero": "2", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 10}, {"id": "t17", "numero": "3", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 10}, {"id": "t20", "numero": "4", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 10}, {"id": "t28", "numero": "5", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 10}, {"id": "t2", "numero": "6", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 17}, {"id": "t10", "numero": "7", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 17}, {"id": "t18", "numero": "8", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 17}, {"id": "t21", "numero": "9", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 17}, {"id": "t29", "numero": "10", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 17}, {"id": "t3", "numero": "11", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 24}, {"id": "t11", "numero": "12", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 24}, {"id": "t22", "numero": "13", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 24}, {"id": "t30", "numero": "14", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 24}, {"id": "t4", "numero": "15", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 31}, {"id": "t12", "numero": "16", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 31}, {"id": "t23", "numero": "17", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 31}, {"id": "t5", "numero": "18", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 39}, {"id": "t13", "numero": "19", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 39}, {"id": "t24", "numero": "20", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 39}, {"id": "t6", "numero": "21", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 46}, {"id": "t14", "numero": "22", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 46}, {"id": "t25", "numero": "23", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 46}, {"id": "t31", "numero": "24", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 46}, {"id": "t7", "numero": "25", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 53}, {"id": "t15", "numero": "26", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 53}, {"id": "t26", "numero": "27", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 53}, {"id": "t32", "numero": "28", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 53}, {"id": "t8", "numero": "29", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 60}, {"id": "t16", "numero": "30", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 60}, {"id": "t27", "numero": "31", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 60}, {"id": "t33", "numero": "32", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 60}, {"id": "t19", "numero": "33", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 66}, {"id": "novios", "numero": "Novios", "tipo": "rectangular", "capacidad": 6, "col": "S", "row": 33}, {"id": "pastel", "numero": "Pastel", "tipo": "decor", "capacidad": 0, "col": "T", "row": 30}, {"id": "dulces", "numero": "Dulces", "tipo": "decor", "capacidad": 0, "col": "T", "row": 42}], "grupos": [{"id": "g1", "nombre": "YUXZITL", "total": 1}, {"id": "g2", "nombre": "OLAF", "total": 1}, {"id": "g3", "nombre": "CLAUDIA", "total": 1}, {"id": "g4", "nombre": "HILARIO", "total": 1}, {"id": "g5", "nombre": "EDITH", "total": 1}, {"id": "g6", "nombre": "FELIPE ALEJANDRO", "total": 1}, {"id": "g7", "nombre": "ARGELIA", "total": 2}, {"id": "g8", "nombre": "CARLITOS", "total": 2}, {"id": "g9", "nombre": "CANDIDO", "total": 5}, {"id": "g10", "nombre": "PETRA", "total": 1}, {"id": "g11", "nombre": "ZAVALA", "total": 2}, {"id": "g12", "nombre": "JOSE LUIS", "total": 1}, {"id": "g13", "nombre": "JEYMI", "total": 3}, {"id": "g14", "nombre": "ROCIO GUTIERREZ", "total": 6}, {"id": "g15", "nombre": "SARITA", "total": 2}, {"id": "g16", "nombre": "EDGAR SUASTEGUI", "total": 2}, {"id": "g17", "nombre": "AYDE OLIVOS", "total": 8}, {"id": "g18", "nombre": "CARMEN REYES", "total": 2}, {"id": "g19", "nombre": "EMMA", "total": 5}, {"id": "g20", "nombre": "KARLA", "total": 4}, {"id": "g21", "nombre": "LORENA CARDENAS", "total": 5}, {"id": "g22", "nombre": "HUGO", "total": 5}, {"id": "g23", "nombre": "MAX", "total": 5}, {"id": "g24", "nombre": "ERNESTO", "total": 4}, {"id": "g25", "nombre": "KARINA", "total": 1}, {"id": "g26", "nombre": "GARNICA", "total": 4}, {"id": "g27", "nombre": "EDUARDO", "total": 3}, {"id": "g28", "nombre": "SARA REYNA", "total": 3}, {"id": "g29", "nombre": "GRACIELA", "total": 6}, {"id": "g30", "nombre": "ADRIAN CORONADO", "total": 4}, {"id": "g31", "nombre": "ALMA DELIA", "total": 5}, {"id": "g32", "nombre": "ALMA BLANCA", "total": 4}, {"id": "g33", "nombre": "JENNYFER", "total": 4}, {"id": "g34", "nombre": "MIGUEL", "total": 4}, {"id": "g35", "nombre": "VERONICA GABRIELA", "total": 5}, {"id": "g36", "nombre": "ROSA FABIOLA", "total": 5}, {"id": "g37", "nombre": "CITLALI", "total": 8}, {"id": "g38", "nombre": "LESLI HDEZ", "total": 2}, {"id": "g39", "nombre": "ANTONIO", "total": 10}, {"id": "g40", "nombre": "ADELA", "total": 10}, {"id": "g41", "nombre": "SERGIO", "total": 8}, {"id": "g42", "nombre": "LESLI DEZ", "total": 3}, {"id": "g43", "nombre": "SAMUEL", "total": 7}, {"id": "g44", "nombre": "LESLI HDEZ", "total": 3}, {"id": "g45", "nombre": "CLAUDIA", "total": 5}, {"id": "g46", "nombre": "ANA BERTHA", "total": 5}, {"id": "g47", "nombre": "FAM. LOZADA", "total": 8}, {"id": "g48", "nombre": "LINA", "total": 2}, {"id": "g49", "nombre": "JOSE VIDAL", "total": 4}, {"id": "g50", "nombre": "ANGELA", "total": 3}, {"id": "g51", "nombre": "ANA XACALCO", "total": 3}, {"id": "g52", "nombre": "ROBERTO", "total": 4}, {"id": "g53", "nombre": "CLARA", "total": 4}, {"id": "g54", "nombre": "NAHOMI", "total": 2}, {"id": "g55", "nombre": "MARÍA VIDAL", "total": 1}, {"id": "g56", "nombre": "MARIANA VISDAL CORONADO", "total": 4}, {"id": "g57", "nombre": "LOURDES CORONADO", "total": 2}, {"id": "g58", "nombre": "LIZET LOBACO", "total": 3}, {"id": "g59", "nombre": "TERE FRANCO", "total": 8}, {"id": "g60", "nombre": "ROSA SALGADO", "total": 2}, {"id": "g61", "nombre": "ARMANDO", "total": 7}, {"id": "g62", "nombre": "CANDELARIA", "total": 3}, {"id": "g63", "nombre": "VICENTE", "total": 5}, {"id": "g64", "nombre": "GRESIA", "total": 5}, {"id": "g65", "nombre": "RENATA", "total": 9}, {"id": "g66", "nombre": "SILVIA VIDAL", "total": 1}, {"id": "g67", "nombre": "DANIEL OLGUIN", "total": 2}, {"id": "g68", "nombre": "ROCIO RAMIREZ", "total": 2}, {"id": "g69", "nombre": "ARMANDO ESTRADA", "total": 2}, {"id": "g70", "nombre": "LEO GUTIERREZ", "total": 3}, {"id": "g71", "nombre": "XAVIER PAEZ", "total": 1}, {"id": "g72", "nombre": "KENIA HUERTOS", "total": 4}, {"id": "g73", "nombre": "ARTURO", "total": 3}, {"id": "g74", "nombre": "OSCAR JAVIER", "total": 4}, {"id": "g75", "nombre": "FERNANDA CRUZ", "total": 1}, {"id": "g76", "nombre": "JACINTO LEYTE", "total": 1}, {"id": "g77", "nombre": "DANIEL ZLANDER", "total": 3}, {"id": "g78", "nombre": "ISRAEL", "total": 4}, {"id": "g79", "nombre": "MAX ALEMAN", "total": 1}, {"id": "g80", "nombre": "MELESIO", "total": 1}, {"id": "g81", "nombre": "MARISELA", "total": 5}, {"id": "g82", "nombre": "ISAI", "total": 4}, {"id": "g83", "nombre": "CESAR ALFONSO", "total": 2}, {"id": "g84", "nombre": "LUIS EMMANUEL", "total": 2}, {"id": "g85", "nombre": "ALFONSO CÉSAR", "total": 2}, {"id": "g86", "nombre": "MAURICIO", "total": 1}, {"id": "g87", "nombre": "RAYMUNDO", "total": 1}, {"id": "g88", "nombre": "IRAD", "total": 2}, {"id": "g89", "nombre": "MIGUEL ADAME", "total": 2}, {"id": "g90", "nombre": "MARIA DE LOS ANGELES", "total": 4}, {"id": "g91", "nombre": "NORMA DE LA ROSA ESTRADA", "total": 1}, {"id": "g92", "nombre": "CELTZIN", "total": 6}], "asign": {"g1": {"novios": 1}, "g2": {"novios": 1}, "g3": {"novios": 1}, "g4": {"novios": 1}, "g5": {"novios": 1}, "g6": {"novios": 1}, "g7": {"t23": 2}, "g8": {"t23": 2}, "g9": {"t23": 5}, "g10": {"t23": 1}, "g11": {"t12": 2}, "g12": {"t12": 1}, "g13": {"t12": 3}, "g14": {"t4": 6}, "g15": {"t4": 2}, "g16": {"t4": 2}, "g17": {"t24": 8}, "g18": {"t24": 2}, "g19": {"t13": 5}, "g20": {"t13": 4}, "g21": {"t5": 5}, "g22": {"t5": 5}, "g23": {"t30": 5}, "g24": {"t30": 4}, "g25": {"t30": 1}, "g26": {"t22": 4}, "g27": {"t22": 3}, "g28": {"t22": 3}, "g29": {"t11": 6}, "g30": {"t11": 4}, "g31": {"t3": 5}, "g32": {"t3": 4}, "g33": {"t31": 4}, "g34": {"t31": 4}, "g35": {"t25": 5}, "g36": {"t25": 5}, "g37": {"t14": 8}, "g38": {"t14": 2}, "g39": {"t6": 10}, "g40": {"t29": 10}, "g41": {"t21": 8}, "g42": {"t21": 3}, "g43": {"t18": 7}, "g44": {"t18": 3}, "g45": {"t10": 5}, "g46": {"t10": 5}, "g47": {"t2": 8}, "g48": {"t2": 2}, "g49": {"t32": 4}, "g50": {"t32": 3}, "g51": {"t32": 3}, "g52": {"t26": 4}, "g53": {"t26": 4}, "g54": {"t26": 2}, "g55": {"t15": 1}, "g56": {"t15": 4}, "g57": {"t15": 2}, "g58": {"t15": 3}, "g59": {"t7": 8}, "g60": {"t7": 2}, "g61": {"t28": 7}, "g62": {"t28": 3}, "g63": {"t20": 5}, "g64": {"t20": 5}, "g65": {"t17": 9}, "g66": {"t17": 1}, "g67": {"t9": 2}, "g68": {"t9": 2}, "g69": {"t9": 2}, "g70": {"t9": 3}, "g71": {"t9": 1}, "g72": {"t1": 4}, "g73": {"t1": 3}, "g74": {"t1": 4}, "g75": {"t33": 1}, "g76": {"t33": 1}, "g77": {"t33": 3}, "g78": {"t33": 4}, "g79": {"t33": 1}, "g80": {"t27": 1}, "g81": {"t27": 5}, "g82": {"t27": 4}, "g83": {"t16": 2}, "g84": {"t16": 2}, "g85": {"t16": 2}, "g86": {"t16": 1}, "g87": {"t16": 1}, "g88": {"t16": 2}, "g89": {"t8": 2}, "g90": {"t8": 4}, "g91": {"t8": 1}, "g92": {"t19": 6}}};
+const SEED = {"mesas": [{"id": "t1", "numero": "1", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 10}, {"id": "t9", "numero": "2", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 10}, {"id": "t17", "numero": "3", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 10}, {"id": "t20", "numero": "4", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 10}, {"id": "t28", "numero": "5", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 10}, {"id": "t2", "numero": "6", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 17}, {"id": "t10", "numero": "7", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 17}, {"id": "t18", "numero": "8", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 17}, {"id": "t21", "numero": "9", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 17}, {"id": "t29", "numero": "10", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 17}, {"id": "t3", "numero": "11", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 24}, {"id": "t11", "numero": "12", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 24}, {"id": "t22", "numero": "13", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 24}, {"id": "t30", "numero": "14", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 24}, {"id": "t4", "numero": "15", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 31}, {"id": "t12", "numero": "16", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 31}, {"id": "t23", "numero": "17", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 31}, {"id": "t5", "numero": "18", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 39}, {"id": "t13", "numero": "19", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 39}, {"id": "t24", "numero": "20", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 39}, {"id": "t6", "numero": "21", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 46}, {"id": "t14", "numero": "22", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 46}, {"id": "t25", "numero": "23", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 46}, {"id": "t31", "numero": "24", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 46}, {"id": "t7", "numero": "25", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 53}, {"id": "t15", "numero": "26", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 53}, {"id": "t26", "numero": "27", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 53}, {"id": "t32", "numero": "28", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 53}, {"id": "t8", "numero": "29", "tipo": "redonda", "capacidad": 10, "col": "C", "row": 60}, {"id": "t16", "numero": "30", "tipo": "redonda", "capacidad": 10, "col": "G", "row": 60}, {"id": "t27", "numero": "31", "tipo": "redonda", "capacidad": 10, "col": "O", "row": 60}, {"id": "t33", "numero": "32", "tipo": "redonda", "capacidad": 10, "col": "S", "row": 60}, {"id": "t19", "numero": "33", "tipo": "redonda", "capacidad": 10, "col": "K", "row": 66}, {"id": "novios", "numero": "Novios", "tipo": "rectangular", "capacidad": 6, "col": "S", "row": 33}, {"id": "pastel", "numero": "Pastel", "tipo": "decor", "capacidad": 0, "col": "T", "row": 30}, {"id": "dulces", "numero": "Dulces", "tipo": "decor", "capacidad": 0, "col": "T", "row": 42}], "grupos": [{"id": "g1", "nombre": "YUXZITL", "total": 1}, {"id": "g2", "nombre": "OLAF", "total": 1}, {"id": "g3", "nombre": "CLAUDIA", "total": 1}, {"id": "g4", "nombre": "HILARIO", "total": 1}, {"id": "g5", "nombre": "EDITH", "total": 1}, {"id": "g6", "nombre": "FELIPE ALEJANDRO", "total": 1}, {"id": "g7", "nombre": "ZAVALA", "total": 2}, {"id": "g8", "nombre": "JEYMI", "total": 3}, {"id": "g9", "nombre": "CANDIDO", "total": 5}, {"id": "g10", "nombre": "EMMA", "total": 4}, {"id": "g11", "nombre": "ARGELIA", "total": 2}, {"id": "g12", "nombre": "JOSE LUIS", "total": 1}, {"id": "g13", "nombre": "CARLITOS", "total": 2}, {"id": "g14", "nombre": "SILVIA VIDAL", "total": 1}, {"id": "g15", "nombre": "ROCIO GUTIERREZ", "total": 6}, {"id": "g16", "nombre": "KARLA", "total": 4}, {"id": "g17", "nombre": "AYDE OLIVOS", "total": 8}, {"id": "g18", "nombre": "CARMEN REYES", "total": 2}, {"id": "g19", "nombre": "EDGAR SUASTEGUI", "total": 2}, {"id": "g20", "nombre": "ROSARIO GALARZA SALAS", "total": 7}, {"id": "g21", "nombre": "LORENA CARDENAS", "total": 5}, {"id": "g22", "nombre": "HUGO", "total": 5}, {"id": "g23", "nombre": "MAX", "total": 5}, {"id": "g24", "nombre": "ERNESTO", "total": 4}, {"id": "g25", "nombre": "KARINA", "total": 1}, {"id": "g26", "nombre": "GARNICA", "total": 4}, {"id": "g27", "nombre": "EDUARDO", "total": 3}, {"id": "g28", "nombre": "SARA REYNA", "total": 3}, {"id": "g29", "nombre": "GRACIELA", "total": 6}, {"id": "g30", "nombre": "ADRIAN CORONADO", "total": 4}, {"id": "g31", "nombre": "ALMA DELIA", "total": 5}, {"id": "g32", "nombre": "ALMA BLANCA", "total": 4}, {"id": "g33", "nombre": "PETRA", "total": 1}, {"id": "g34", "nombre": "JENNYFER", "total": 4}, {"id": "g35", "nombre": "MIGUEL", "total": 4}, {"id": "g36", "nombre": "SARITA", "total": 2}, {"id": "g37", "nombre": "VERONICA GABRIELA", "total": 5}, {"id": "g38", "nombre": "ROSA FABIOLA", "total": 5}, {"id": "g39", "nombre": "CITLALI", "total": 8}, {"id": "g40", "nombre": "LESLI HDEZ", "total": 2}, {"id": "g41", "nombre": "ANTONIO", "total": 10}, {"id": "g42", "nombre": "ADELA", "total": 10}, {"id": "g43", "nombre": "SERGIO", "total": 8}, {"id": "g44", "nombre": "LESLI DEZ", "total": 3}, {"id": "g45", "nombre": "SAMUEL", "total": 7}, {"id": "g46", "nombre": "LESLI HDEZ", "total": 3}, {"id": "g47", "nombre": "CLAUDIA", "total": 5}, {"id": "g48", "nombre": "ANA BERTHA", "total": 5}, {"id": "g49", "nombre": "FAM. LOZADA", "total": 8}, {"id": "g50", "nombre": "LINA", "total": 2}, {"id": "g51", "nombre": "JOSE VIDAL", "total": 4}, {"id": "g52", "nombre": "ANGELA", "total": 3}, {"id": "g53", "nombre": "ANA XACALCO", "total": 3}, {"id": "g54", "nombre": "ROBERTO", "total": 4}, {"id": "g55", "nombre": "CLARA", "total": 4}, {"id": "g56", "nombre": "NAHOMI", "total": 2}, {"id": "g57", "nombre": "MARÍA VIDAL", "total": 1}, {"id": "g58", "nombre": "MARIANA VISDAL CORONADO", "total": 4}, {"id": "g59", "nombre": "LOURDES CORONADO", "total": 2}, {"id": "g60", "nombre": "LIZET LOBACO", "total": 3}, {"id": "g61", "nombre": "TERE FRANCO", "total": 8}, {"id": "g62", "nombre": "ROSA SALGADO", "total": 2}, {"id": "g63", "nombre": "ARMANDO", "total": 7}, {"id": "g64", "nombre": "CANDELARIA", "total": 3}, {"id": "g65", "nombre": "VICENTE", "total": 5}, {"id": "g66", "nombre": "GRESIA", "total": 5}, {"id": "g67", "nombre": "RENATA", "total": 9}, {"id": "g68", "nombre": "ISRAEL", "total": 4}, {"id": "g69", "nombre": "MAX ALEMAN", "total": 1}, {"id": "g70", "nombre": "ARMANDO ESTRADA", "total": 2}, {"id": "g71", "nombre": "LEO GUTIERREZ", "total": 3}, {"id": "g72", "nombre": "XAVIER PAEZ", "total": 1}, {"id": "g73", "nombre": "ARTURO", "total": 3}, {"id": "g74", "nombre": "OSCAR JAVIER", "total": 4}, {"id": "g75", "nombre": "DANIEL ZLANDER", "total": 3}, {"id": "g76", "nombre": "KENIA HUERTOS", "total": 4}, {"id": "g77", "nombre": "DANIEL OLGUIN", "total": 2}, {"id": "g78", "nombre": "ROCIO RAMIREZ", "total": 2}, {"id": "g79", "nombre": "FERNANDA CRUZ", "total": 1}, {"id": "g80", "nombre": "JACINTO LEYTE", "total": 1}, {"id": "g81", "nombre": "MELESIO", "total": 1}, {"id": "g82", "nombre": "MARISELA", "total": 5}, {"id": "g83", "nombre": "ISAI", "total": 4}, {"id": "g84", "nombre": "CESAR ALFONSO", "total": 2}, {"id": "g85", "nombre": "LUIS EMMANUEL", "total": 2}, {"id": "g86", "nombre": "ALFONSO CÉSAR", "total": 2}, {"id": "g87", "nombre": "MAURICIO", "total": 1}, {"id": "g88", "nombre": "RAYMUNDO", "total": 1}, {"id": "g89", "nombre": "IRAD", "total": 2}, {"id": "g90", "nombre": "MIGUEL ADAME", "total": 2}, {"id": "g91", "nombre": "MARIA DE LOS ANGELES", "total": 4}, {"id": "g92", "nombre": "NORMA DE LA ROSA ESTRADA", "total": 1}, {"id": "g93", "nombre": "CELTZIN", "total": 6}, {"id": "g94", "nombre": "ORLANDO ADAME VILLALOBOS", "total": 1}], "asign": {"g1": {"novios": 1}, "g2": {"novios": 1}, "g3": {"novios": 1}, "g4": {"novios": 1}, "g5": {"novios": 1}, "g6": {"novios": 1}, "g7": {"t23": 2}, "g8": {"t23": 3}, "g9": {"t23": 5}, "g10": {"t12": 4}, "g11": {"t12": 2}, "g12": {"t12": 1}, "g13": {"t12": 2}, "g14": {"t12": 1}, "g15": {"t4": 6}, "g16": {"t4": 4}, "g17": {"t24": 8}, "g18": {"t24": 2}, "g19": {"t13": 2}, "g20": {"t13": 7}, "g21": {"t5": 5}, "g22": {"t5": 5}, "g23": {"t30": 5}, "g24": {"t30": 4}, "g25": {"t30": 1}, "g26": {"t22": 4}, "g27": {"t22": 3}, "g28": {"t22": 3}, "g29": {"t11": 6}, "g30": {"t11": 4}, "g31": {"t3": 5}, "g32": {"t3": 4}, "g33": {"t3": 1}, "g34": {"t31": 4}, "g35": {"t31": 4}, "g36": {"t31": 2}, "g37": {"t25": 5}, "g38": {"t25": 5}, "g39": {"t14": 8}, "g40": {"t14": 2}, "g41": {"t6": 10}, "g42": {"t29": 10}, "g43": {"t21": 8}, "g44": {"t21": 3}, "g45": {"t18": 7}, "g46": {"t18": 3}, "g47": {"t10": 5}, "g48": {"t10": 5}, "g49": {"t2": 8}, "g50": {"t2": 2}, "g51": {"t32": 4}, "g52": {"t32": 3}, "g53": {"t32": 3}, "g54": {"t26": 4}, "g55": {"t26": 4}, "g56": {"t26": 2}, "g57": {"t15": 1}, "g58": {"t15": 4}, "g59": {"t15": 2}, "g60": {"t15": 3}, "g61": {"t7": 8}, "g62": {"t7": 2}, "g63": {"t28": 7}, "g64": {"t28": 3}, "g65": {"t20": 5}, "g66": {"t20": 5}, "g67": {"t17": 9}, "g68": {"t9": 4}, "g69": {"t9": 1}, "g70": {"t9": 2}, "g71": {"t9": 3}, "g72": {"t1": 1}, "g73": {"t1": 3}, "g74": {"t1": 4}, "g75": {"t1": 3}, "g76": {"t33": 4}, "g77": {"t33": 2}, "g78": {"t33": 2}, "g79": {"t33": 1}, "g80": {"t33": 1}, "g81": {"t27": 1}, "g82": {"t27": 5}, "g83": {"t27": 4}, "g84": {"t16": 2}, "g85": {"t16": 2}, "g86": {"t16": 2}, "g87": {"t16": 1}, "g88": {"t16": 1}, "g89": {"t16": 2}, "g90": {"t8": 2}, "g91": {"t8": 4}, "g92": {"t8": 1}, "g93": {"t19": 6}, "g94": {"t19": 1}}};
 
 /* 34 colores: uno por mesa (33 invitados + novios) */
 const COLORES = [
@@ -206,6 +229,8 @@ let mesaSel = null;
 let filtro = "todos";
 let busqueda = "";
 let sucio = false;
+let historial = [];
+const HISTORIAL_MAX = 30;
 
 const CUPO = CONFIG.capacidadMesa;
 const TOPE = CONFIG.capacidadMesa + CONFIG.excedentePermitido;
@@ -291,18 +316,42 @@ async function importar(){
     const d = await r.json();
     if(!d.ok){ avisar("No se pudieron leer las confirmaciones"); return; }
     const existentes = new Set(estado.grupos.map(g=>g.nombre.trim().toUpperCase()));
-    let nuevos = 0;
-    (d.confirmaciones||[]).forEach(c=>{
-      if(c.asiste !== "Sí") return;
+    const candidatos = (d.confirmaciones||[]).filter(c=>{
+      if(c.asiste !== "Sí") return false;
       const nom = (c.nombre||"").trim();
-      if(!nom || existentes.has(nom.toUpperCase())) return;
-      estado.grupos.push({ id:"c"+Date.now()+"_"+nuevos, nombre:nom, total:Number(c.pases)||1, origen:"confirmacion" });
+      if(!nom || existentes.has(nom.toUpperCase())) return false;
       existentes.add(nom.toUpperCase());
-      nuevos++;
+      return true;
     });
+    if(candidatos.length) guardarHistorial();
+    candidatos.forEach((c,i)=>{
+      const nom = c.nombre.trim();
+      estado.grupos.push({ id:"c"+Date.now()+"_"+i, nombre:nom, total:Number(c.pases)||1, origen:"confirmacion" });
+    });
+    const nuevos = candidatos.length;
     if(nuevos){ sucio=true; avisar(nuevos+" invitado(s) importado(s)"); render(); }
     else avisar("No hay confirmados nuevos");
   }catch(e){ avisar("No se pudo conectar"); }
+}
+
+/* ---------- deshacer ----------
+   Antes de cada cambio real (sentar, quitar, mover, intercambiar, importar)
+   se guarda una copia de grupos+asign. "Deshacer" restaura la última copia.
+   Los datos guardados en la hoja no se tocan hasta que se aprieta Guardar,
+   así que deshacer es completamente seguro. */
+function guardarHistorial(){
+  historial.push(JSON.parse(JSON.stringify({ mesas: estado.mesas, grupos: estado.grupos, asign: estado.asign })));
+  if(historial.length > HISTORIAL_MAX) historial.shift();
+}
+function deshacer(){
+  if(!historial.length){ avisar("No hay nada que deshacer"); return; }
+  const previo = historial.pop();
+  estado.mesas = previo.mesas;
+  estado.grupos = previo.grupos;
+  estado.asign = previo.asign;
+  sucio = true;
+  avisar("Se deshizo el último cambio");
+  render();
 }
 
 /* ---------- acciones ---------- */
@@ -312,18 +361,21 @@ function sentar(gid){
   const m = mesaPorId(mesaSel);
   const tope = (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
   if(ocupacion(mesaSel) >= tope){ avisar("Esa mesa ya llegó a su tope de "+tope); return; }
+  guardarHistorial();
   if(!estado.asign[gid]) estado.asign[gid] = {};
   estado.asign[gid][mesaSel] = (estado.asign[gid][mesaSel]||0)+1;
   sucio=true; render();
 }
 function levantar(gid, mesaId){
   const m = estado.asign[gid]; if(!m || !m[mesaId]) return;
+  guardarHistorial();
   m[mesaId]--;
   if(m[mesaId]<=0) delete m[mesaId];
   if(Object.keys(m).length===0) delete estado.asign[gid];
   sucio=true; render();
 }
 function vaciarMesa(mesaId){
+  guardarHistorial();
   for(const gid in estado.asign){
     if(estado.asign[gid][mesaId]){
       delete estado.asign[gid][mesaId];
@@ -332,22 +384,70 @@ function vaciarMesa(mesaId){
   }
   sucio=true; render();
 }
+/* Quita a TODOS los invitados de TODAS las mesas (no borra grupos ni mesas,
+   solo el acomodo). Como cualquier otro cambio, se puede deshacer. */
+function reiniciarAcomodo(){
+  if(!confirm("¿Quitar a todos los invitados de sus mesas? El acomodo actual se puede deshacer después si te equivocas.")) return;
+  guardarHistorial();
+  estado.asign = {};
+  mesaSel = null;
+  sucio = true;
+  avisar("Se reinició el acomodo: nadie quedó sentado");
+  render();
+}
+/* Encuentra huecos libres en la rejilla del plano (columnas C,G,K,O,S por
+   cada fila de mesas ya existente) para poder agregar una mesa redonda más
+   sin tener que rediseñar el plano. La mesa de novios bloquea dos filas de
+   rejilla porque ocupa un espacio doble. */
+function celdasLibresPlano(){
+  const COLS = ["C","G","K","O","S"];
+  const FILAS = [10,17,24,31,39,46,53,60,66];
+  const ocupadas = new Set();
+  estado.mesas.forEach(m=>{
+    if(m.tipo==="decor") return;
+    ocupadas.add(m.col+","+m.row);
+    if(m.id==="novios"){
+      const vecina = FILAS.find(f => f!==m.row && ROW_G[f]===ROW_G[m.row]);
+      if(vecina!=null) ocupadas.add(m.col+","+vecina);
+    }
+  });
+  const libres = [];
+  FILAS.forEach(fila=>COLS.forEach(col=>{
+    if(!ocupadas.has(col+","+fila)) libres.push({col, row:fila});
+  }));
+  return libres;
+}
+function agregarMesa(){
+  const libres = celdasLibresPlano();
+  if(!libres.length){ avisar("No queda espacio libre en el plano para otra mesa"); return; }
+  guardarHistorial();
+  const celda = libres[0];
+  const numeros = estado.mesas.filter(m=>m.tipo==="redonda").map(m=>Number(m.numero)).filter(n=>!isNaN(n));
+  const numero = String((numeros.length ? Math.max(...numeros) : 0) + 1);
+  estado.mesas.push({ id:"t_extra_"+Date.now(), numero, tipo:"redonda", capacidad:CUPO, col:celda.col, row:celda.row });
+  sucio = true;
+  avisar(`Se agregó la mesa ${numero}`);
+  render();
+}
 function topeDe(mesaId){
   const m = mesaPorId(mesaId);
   return (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
 }
-/* Mueve de un jalón todo lo que un grupo tiene sentado en `origenId` hacia
-   `destinoId`. Si no cabe completo, mueve lo que quepa y deja el resto donde
-   estaba (nunca se pierde gente). Así, reacomodar a una familia que ya estaba
-   sentada es un solo cambio en vez de quitar y volver a sentar uno por uno. */
-function moverGrupo(gid, origenId, destinoId){
+/* Mueve gente de un grupo desde `origenId` hacia `destinoId`. Sin `cantidad`
+   mueve a todos los que hay ahí (usado por el selector "Mover a…" y al
+   arrastrar el cuerpo completo del pin); con `cantidad` mueve solo esos
+   (usado al arrastrar la fichita "1"). Si no cabe todo lo pedido, mueve lo
+   que quepa y deja el resto donde estaba (nunca se pierde gente). */
+function moverGrupo(gid, origenId, destinoId, cantidad){
   if(!destinoId || origenId===destinoId) return;
-  const cantidad = (estado.asign[gid]||{})[origenId] || 0;
-  if(cantidad<=0) return;
+  const disponible = (estado.asign[gid]||{})[origenId] || 0;
+  if(disponible<=0) return;
+  const pedir = (cantidad==null) ? disponible : Math.min(cantidad, disponible);
   const libres = topeDe(destinoId) - ocupacion(destinoId);
   if(libres<=0){ avisar("Esa mesa ya llegó a su tope"); render(); return; }
-  const mover = Math.min(cantidad, libres);
+  const mover = Math.min(pedir, libres);
 
+  guardarHistorial();
   estado.asign[gid][origenId] -= mover;
   if(estado.asign[gid][origenId]<=0) delete estado.asign[gid][origenId];
   estado.asign[gid][destinoId] = (estado.asign[gid][destinoId]||0) + mover;
@@ -355,9 +455,12 @@ function moverGrupo(gid, origenId, destinoId){
 
   const g = estado.grupos.find(x=>x.id===gid);
   const destMesa = mesaPorId(destinoId), origenMesa = mesaPorId(origenId);
-  avisar(mover<cantidad
-    ? `Se movieron ${mover} de ${g.nombre} a la mesa ${destMesa.numero} (quedaron ${cantidad-mover} en la mesa ${origenMesa.numero})`
-    : `${g.nombre} se movió completo a la mesa ${destMesa.numero}`);
+  const quedan = disponible - mover;
+  let msg;
+  if(mover < pedir) msg = `Solo cupieron ${mover} de ${g.nombre} en la mesa ${destMesa.numero} (quedaron ${quedan} en la mesa ${origenMesa.numero})`;
+  else if(quedan > 0) msg = `Se movieron ${mover} de ${g.nombre} a la mesa ${destMesa.numero} (quedan ${quedan} en la mesa ${origenMesa.numero})`;
+  else msg = `${g.nombre} se movió completo a la mesa ${destMesa.numero}`;
+  avisar(msg);
   sucio=true; render();
 }
 function opcionesMover(origenId){
@@ -368,11 +471,16 @@ function opcionesMover(origenId){
   }).filter(Boolean).join("");
 }
 
-/* ---------- arrastrar una mesa encima de otra para intercambiarlas ----------
-   Pointer Events (no la API clásica de drag de HTML5, que no funciona en
-   celulares): el mismo código sirve para mouse, lápiz y dedo. Un movimiento
-   corto se trata como clic normal (selecciona la mesa); solo si el puntero se
-   desplaza más de 8px se considera arrastre. */
+/* ---------- arrastrar con Pointer Events (no la API clásica de drag de
+   HTML5, que no funciona en celulares): el mismo código sirve para mouse,
+   lápiz y dedo. Un movimiento corto se trata como clic normal; solo si el
+   puntero se desplaza más de 8px se considera arrastre de verdad.
+   Hay dos tipos de arrastre, con el mismo motor:
+     - tipo "mesa": se agarra una mesa completa del plano y se suelta sobre
+       otra para INTERCAMBIAR a todos sus invitados entre las dos.
+     - tipo "persona": se agarra un pin (o su fichita "1") de la lista o del
+       detalle de una mesa, y se suelta sobre la mesa destino para mover a
+       ese grupo (completo o de a uno) para allá. */
 let arrastre = null;
 
 function puedeIntercambiarMesas(aId, bId){
@@ -383,6 +491,7 @@ function puedeIntercambiarMesas(aId, bId){
 
 function intercambiarMesas(aId, bId){
   if(!puedeIntercambiarMesas(aId,bId)){ avisar("No caben completos si se intercambian esas mesas"); return; }
+  guardarHistorial();
   for(const gid in estado.asign){
     const mapa = estado.asign[gid];
     const a = mapa[aId]||0, b = mapa[bId]||0;
@@ -397,15 +506,26 @@ function intercambiarMesas(aId, bId){
   render();
 }
 
-function iniciarArrastreMesa(e, el, mesaId){
-  if(e.pointerType==="mouse" && e.button!==0) return;
-  arrastre = { origenId: mesaId, origenEl: el, startX:e.clientX, startY:e.clientY, moviendo:false, hoverEl:null };
-  el.setPointerCapture(e.pointerId);
-  el.addEventListener("pointermove", moverArrastreMesa);
-  el.addEventListener("pointerup", soltarArrastreMesa, {once:true});
-  el.addEventListener("pointercancel", cancelarArrastreMesa, {once:true});
+function objetivoValido(ctx, mesaEl){
+  if(!mesaEl || mesaEl.dataset.mesaId===ctx.origenId) return null;
+  if(ctx.tipo==="persona" && mesaPorId(mesaEl.dataset.mesaId).tipo==="decor") return null;
+  return mesaEl;
 }
-function moverArrastreMesa(e){
+function objetivoEsBueno(ctx, destinoId){
+  return ctx.tipo==="mesa"
+    ? puedeIntercambiarMesas(ctx.origenId, destinoId)
+    : (topeDe(destinoId) - ocupacion(destinoId)) > 0;
+}
+
+function iniciarArrastre(e, el, ctx){
+  if(e.pointerType==="mouse" && e.button!==0) return;
+  arrastre = Object.assign({ origenEl: el, startX:e.clientX, startY:e.clientY, moviendo:false, hoverEl:null }, ctx);
+  el.setPointerCapture(e.pointerId);
+  el.addEventListener("pointermove", moverArrastre);
+  el.addEventListener("pointerup", soltarArrastre, {once:true});
+  el.addEventListener("pointercancel", cancelarArrastre, {once:true});
+}
+function moverArrastre(e){
   if(!arrastre) return;
   const dx=e.clientX-arrastre.startX, dy=e.clientY-arrastre.startY;
   if(!arrastre.moviendo && Math.hypot(dx,dy) > 8){
@@ -415,41 +535,62 @@ function moverArrastreMesa(e){
   if(!arrastre.moviendo) return;
   const bajo = document.elementFromPoint(e.clientX, e.clientY);
   const mesaEl = bajo && bajo.closest(".mesa[data-mesa-id]");
-  const destinoValido = (mesaEl && mesaEl.dataset.mesaId!==arrastre.origenId) ? mesaEl : null;
+  const destinoValido = objetivoValido(arrastre, mesaEl);
   if(destinoValido !== arrastre.hoverEl){
     if(arrastre.hoverEl) arrastre.hoverEl.classList.remove("objetivo-ok","objetivo-mal");
     arrastre.hoverEl = destinoValido;
     if(destinoValido){
-      const ok = puedeIntercambiarMesas(arrastre.origenId, destinoValido.dataset.mesaId);
+      const ok = objetivoEsBueno(arrastre, destinoValido.dataset.mesaId);
       destinoValido.classList.add(ok?"objetivo-ok":"objetivo-mal");
     }
   }
 }
-function soltarArrastreMesa(e){
+function soltarArrastre(e){
   if(!arrastre) return;
-  arrastre.origenEl.removeEventListener("pointermove", moverArrastreMesa);
+  arrastre.origenEl.removeEventListener("pointermove", moverArrastre);
   arrastre.origenEl.classList.remove("arrastrando");
   if(arrastre.hoverEl) arrastre.hoverEl.classList.remove("objetivo-ok","objetivo-mal");
-  const { moviendo, hoverEl, origenId } = arrastre;
+  const ctx = arrastre;
   arrastre = null;
-  if(moviendo){
-    if(hoverEl) intercambiarMesas(origenId, hoverEl.dataset.mesaId);
-  } else {
-    mesaSel = (mesaSel===origenId) ? null : origenId;
+  if(ctx.moviendo){
+    if(ctx.hoverEl){
+      const destinoId = ctx.hoverEl.dataset.mesaId;
+      if(ctx.tipo==="mesa") intercambiarMesas(ctx.origenId, destinoId);
+      else moverGrupo(ctx.gid, ctx.origenId, destinoId, ctx.cantidad);
+    }
+  } else if(ctx.tipo==="mesa"){
+    mesaSel = (mesaSel===ctx.origenId) ? null : ctx.origenId;
     render();
   }
 }
-function cancelarArrastreMesa(){
+function cancelarArrastre(){
   if(!arrastre) return;
   arrastre.origenEl.classList.remove("arrastrando");
   if(arrastre.hoverEl) arrastre.hoverEl.classList.remove("objetivo-ok","objetivo-mal");
   arrastre = null;
 }
+/* Conecta el arrastre de personas: [data-drag-gid] es el cuerpo del pin
+   (mueve a todos los que tenga ese grupo ahí) y [data-drag-uno] es la
+   fichita "1" (mueve solo a una persona). Se usa igual en el detalle de una
+   mesa y en la lista general de invitados. */
+function activarArrastrePersona(contenedor){
+  contenedor.querySelectorAll("[data-drag-gid]").forEach(el=>{
+    el.addEventListener("pointerdown", e=>iniciarArrastre(e, el, {
+      tipo:"persona", gid: el.dataset.dragGid, origenId: el.dataset.dragOrigen, cantidad: null
+    }));
+  });
+  contenedor.querySelectorAll("[data-drag-uno]").forEach(el=>{
+    el.addEventListener("pointerdown", e=>iniciarArrastre(e, el, {
+      tipo:"persona", gid: el.dataset.dragUno, origenId: el.dataset.dragOrigen, cantidad: 1
+    }));
+  });
+}
 
 /* ---------- render ---------- */
-function render(){ renderResumen(); renderPlano(); renderDetalle(); renderFiltros(); renderLista(); }
+function render(){ renderResumen(); renderPlano(); renderDetalle(); renderFiltros(); renderLista(); ajustarCelda(); }
 
 function renderResumen(){
+  $("btn-deshacer").disabled = historial.length===0;
   const total = estado.grupos.reduce((s,g)=>s+g.total,0);
   const sentados = estado.grupos.reduce((s,g)=>s+sentadosDe(g.id),0);
   const redondas = estado.mesas.filter(m=>m.tipo==="redonda");
@@ -499,7 +640,7 @@ function renderPlano(){
       if(m.id===mesaSel) d.classList.add("sel");
       d.innerHTML = `<div class="n">${esc(m.numero)}</div><div class="o">${occ}/${cupo}</div>`;
       d.dataset.mesaId = m.id;
-      d.addEventListener("pointerdown", e=>iniciarArrastreMesa(e, d, m.id));
+      d.addEventListener("pointerdown", e=>iniciarArrastre(e, d, {tipo:"mesa", origenId:m.id}));
     }
     p.appendChild(d);
   });
@@ -515,11 +656,16 @@ function renderDetalle(){
   const col = colorMesa(mesaSel);
 
   const pins = estado.grupos.filter(g=>(estado.asign[g.id]||{})[mesaSel])
-    .map(g=>`<span class="pin" style="background:${col}">${esc(g.nombre)} · ${estado.asign[g.id][mesaSel]}
-      <button title="Quitar uno" data-quitar="${g.id}">−</button>
-      <select class="mover" data-mover="${g.id}" data-origen="${mesaSel}" title="Mover todo el grupo a otra mesa">
-        <option value="">Mover a…</option>${opcionesMover(mesaSel)}
-      </select></span>`).join("");
+    .map(g=>{
+      const cnt = estado.asign[g.id][mesaSel];
+      return `<span class="pin" style="background:${col}">
+        <span class="cuerpo" data-drag-gid="${g.id}" data-drag-origen="${mesaSel}" title="Arrastra para mover a los ${cnt}">${esc(g.nombre)} · ${cnt}</span>
+        ${cnt>1?`<span class="ficha" data-drag-uno="${g.id}" data-drag-origen="${mesaSel}" title="Arrastra para mover solo a 1">1</span>`:""}
+        <button title="Quitar uno" data-quitar="${g.id}">−</button>
+        <select class="mover" data-mover="${g.id}" data-origen="${mesaSel}" title="Mover todo el grupo a otra mesa">
+          <option value="">Mover a…</option>${opcionesMover(mesaSel)}
+        </select></span>`;
+    }).join("");
 
   c.innerHTML = `
     <h3><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:${col};margin-right:7px"></span>
@@ -532,6 +678,7 @@ function renderDetalle(){
     b.addEventListener("click", ()=>levantar(b.dataset.quitar, mesaSel)));
   c.querySelectorAll("[data-mover]").forEach(s=>
     s.addEventListener("change", ()=>{ if(s.value) moverGrupo(s.dataset.mover, s.dataset.origen, s.value); }));
+  activarArrastrePersona(c);
   const bv = $("btn-vaciar");
   if(bv) bv.addEventListener("click", ()=>vaciarMesa(mesaSel));
 }
@@ -556,7 +703,10 @@ function renderLista(){
     const mapa = estado.asign[g.id]||{};
     const ubic = Object.keys(mapa).map(mid=>{
       const mm = mesaPorId(mid);
-      return `<span class="ubic" style="background:${colorMesa(mid)}">Mesa ${esc(mm?mm.numero:"?")} · ${mapa[mid]}
+      const cnt = mapa[mid];
+      return `<span class="ubic" style="background:${colorMesa(mid)}">
+        <span class="cuerpo" data-drag-gid="${g.id}" data-drag-origen="${mid}" title="Arrastra para mover a los ${cnt}">Mesa ${esc(mm?mm.numero:"?")} · ${cnt}</span>
+        ${cnt>1?`<span class="ficha" data-drag-uno="${g.id}" data-drag-origen="${mid}" title="Arrastra para mover solo a 1">1</span>`:""}
         <button class="mini" style="width:16px;height:16px;border:none;background:transparent;color:#fff;font-size:.7rem"
                 data-quitar="${g.id}" data-mesa="${mid}" title="Quitar uno">−</button>
         <select class="mover-mini" data-mover="${g.id}" data-origen="${mid}" title="Mover todo el grupo a otra mesa">
@@ -581,12 +731,55 @@ function renderLista(){
     b.addEventListener("click", ()=>levantar(b.dataset.quitar, b.dataset.mesa)));
   $("lista").querySelectorAll("[data-mover]").forEach(s=>
     s.addEventListener("change", ()=>{ if(s.value) moverGrupo(s.dataset.mover, s.dataset.origen, s.value); }));
+  activarArrastrePersona($("lista"));
 }
+
+/* ---------- ajustar el tamaño de las mesas al espacio real disponible ----------
+   En vez de adivinar por media queries, se mide el ancho y el alto que de
+   verdad tiene .col-plano (ya con su padding y la nota de abajo descontados)
+   y se calcula --celda para que la rejilla completa (6 columnas × 9 filas,
+   con sus separaciones) quepa exacta, sin pedir scroll ni horizontal ni
+   vertical. overflow:auto en .col-plano queda como red de seguridad. */
+function ajustarCelda(){
+  const cont = document.querySelector(".col-plano");
+  if(!cont) return;
+  const nota = cont.querySelector(".nota");
+  const cs = getComputedStyle(cont);
+  const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+  const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+  const notaH = nota ? nota.offsetHeight + 12 : 0;
+  const anchoDisp = cont.clientWidth - padX - 4;
+  const altoDisp = cont.clientHeight - padY - notaH - 12;
+  const K_COL = .24, K_ROW = .11, FILAS_FIJAS = 60, PAD_PLANO = 8;
+  const celdaAncho = (anchoDisp - PAD_PLANO) / (6 + 5*K_COL);
+  const celdaAlto  = (altoDisp - PAD_PLANO - FILAS_FIJAS) / (9 + 10*K_ROW);
+  const celda = Math.max(40, Math.min(84, celdaAncho, celdaAlto) * .97);
+  document.documentElement.style.setProperty("--celda", Math.floor(celda) + "px");
+}
+let _timerCelda = null;
+window.addEventListener("resize", ()=>{ clearTimeout(_timerCelda); _timerCelda = setTimeout(ajustarCelda, 120); });
+
+/* En celular, "Dividido/Ampliar croquis/Ampliar lista" le dan más alto a una
+   zona u otra (ambas siguen visibles, pero una se encoge). En pantallas
+   grandes estos botones ni se muestran. */
+document.querySelectorAll("#tabs-mobile [data-modo]").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll("#tabs-mobile [data-modo]").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");
+    const main = document.querySelector("main");
+    main.classList.remove("modo-croquis","modo-lista");
+    if(b.dataset.modo!=="dividido") main.classList.add("modo-"+b.dataset.modo);
+    ajustarCelda();
+  });
+});
 
 /* ---------- eventos ---------- */
 $("buscar").addEventListener("input", e=>{ busqueda = e.target.value.trim().toLowerCase(); renderLista(); });
 $("btn-guardar").addEventListener("click", guardar);
 $("btn-importar").addEventListener("click", importar);
+$("btn-deshacer").addEventListener("click", deshacer);
+$("btn-reiniciar").addEventListener("click", reiniciarAcomodo);
+$("btn-agregar-mesa").addEventListener("click", agregarMesa);
 window.addEventListener("beforeunload", e=>{ if(sucio){ e.preventDefault(); e.returnValue=""; } });
 
 cargar();
