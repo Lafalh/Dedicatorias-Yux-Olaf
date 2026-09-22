@@ -171,8 +171,6 @@ h1,h2{ font-family:var(--display); font-weight:500; }
 }
 .nav-sitio a:last-child{ border-right:none; }
 .nav-sitio a:hover{ background:var(--oro); color:#fff; }
-
-.tabla-confirmaciones td .boton{ padding:6px 12px; font-size:.62rem; }
 </style>
 </head>
 <body>
@@ -429,31 +427,16 @@ function pintarDatos(confirmaciones){
     $("tabla-confirmaciones").innerHTML = `<tr><td class="vacio">Aún no hay confirmaciones.</td></tr>`;
   } else {
     $("tabla-confirmaciones").innerHTML = `
-      <tr><th>Nombre</th><th>Asiste</th><th>Personas</th><th>Fecha</th><th>Link de confirmación</th></tr>
-      ${confirmaciones.map((c,i) => `
+      <tr><th>Nombre</th><th>Asiste</th><th>Personas</th><th>Fecha</th></tr>
+      ${confirmaciones.map(c => `
         <tr>
           <td>${escaparHTML(c.nombre)}</td>
           <td>${escaparHTML(c.asiste)}</td>
           <td>${c.pases}</td>
           <td>${formatearFecha(c.fecha)}</td>
-          <td>${c.asiste === "Sí" ? `<button class="boton" data-copiar-idx="${i}">Copiar link</button>` : "—"}</td>
         </tr>
       `).join("")}
     `;
-    $("tabla-confirmaciones").querySelectorAll("[data-copiar-idx]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const c = confirmaciones[Number(btn.dataset.copiarIdx)];
-        const url = new URL("confirmacion.html", location.href);
-        url.search = "?invitado=" + encodeURIComponent(c.nombre);
-        navigator.clipboard.writeText(url.href).then(() => {
-          const original = btn.textContent;
-          btn.textContent = "¡Copiado!";
-          setTimeout(() => { btn.textContent = original; }, 1500);
-        }).catch(() => {
-          prompt("Copia este link manualmente:", url.href);
-        });
-      });
-    });
   }
 }
 

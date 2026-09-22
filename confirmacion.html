@@ -3,469 +3,240 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tu confirmación · Yuxzitl &amp; Olaf</title>
+<title>Confirmaciones · Yuxzitl &amp; Olaf</title>
 <meta name="robots" content="noindex, nofollow">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --tinta:        #33391F;
-  --pergamino:    #FBF7EA;
-  --pergamino-2:  #F1EEE3;
-  --rosa-viejo:   #A6822C;
-  --oro:          #C9A227;
-  --salvia:       #8B9A5B;
-  --alerta:       #B3413C;
-  --blanco-calido:#FFFFFF;
-  --display: "Fraunces", serif;
-  --texto:   "Jost", sans-serif;
-  --sombra: 0 18px 40px -18px rgba(51,57,31,.35);
+  --tinta:#33391F; --pergamino:#FBF7EA; --pergamino-2:#F1EEE3; --blanco:#FFFFFF;
+  --rosa-viejo:#A6822C; --oro:#C9A227; --salvia:#8B9A5B; --alerta:#B3413C;
+  --display:"Fraunces",serif; --texto:"Jost",sans-serif;
+  --sombra:0 14px 34px -16px rgba(51,57,31,.35);
 }
-*{box-sizing:border-box; margin:0; padding:0;}
-html,body{ height:100%; }
-body{
-  font-family:var(--texto); background:var(--pergamino); color:var(--tinta);
-  display:flex; flex-direction:column; height:100vh; overflow:hidden;
+*{box-sizing:border-box;margin:0;padding:0;}
+body{ font-family:var(--texto); background:var(--pergamino); color:var(--tinta); font-size:14px; }
+h1,h2{ font-family:var(--display); font-weight:500; }
+
+.nav-sitio{ display:flex; background:var(--tinta); }
+.nav-sitio a{
+  flex:1 1 auto; text-align:center; padding:12px 10px;
+  color:var(--pergamino); text-decoration:none;
+  font-family:var(--texto); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+  border-right:1px solid rgba(255,255,255,.14);
+  transition:background .25s ease, color .25s ease;
 }
-h1,h2,h3{ font-family:var(--display); font-weight:500; line-height:1.15; }
-.envoltura{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; max-width:560px; width:100%; margin:0 auto; }
-.centro{ text-align:center; }
-.ojo-de-cerradura{ text-transform:uppercase; letter-spacing:.24em; font-size:.68rem; color:var(--oro); font-weight:500; }
+.nav-sitio a:last-child{ border-right:none; }
+.nav-sitio a:hover{ background:var(--oro); color:#fff; }
 
-.divisor{ width:100px; height:26px; margin:10px auto; color:var(--oro); }
-.divisor svg{ width:100%; height:100%; }
+header{ padding:20px 24px 14px; border-bottom:1px solid var(--pergamino-2); background:var(--blanco); }
+header p.sub{ font-size:.72rem; color:var(--rosa-viejo); letter-spacing:.14em; text-transform:uppercase; }
+header h1{ font-size:1.6rem; font-style:italic; margin-top:4px; }
 
-.cabecera{ flex:0 0 auto; text-align:center; padding:22px 20px 4px; }
-.cabecera h1{ font-size:1.5rem; font-style:italic; margin-top:6px; }
-.cabecera .nombre-invitado{ font-family:var(--display); font-style:italic; color:var(--rosa-viejo); font-size:1.1rem; margin-top:4px; }
+.resumen{ display:flex; flex-wrap:wrap; gap:0; padding:13px 24px; background:var(--blanco); border-bottom:1px solid var(--pergamino-2); }
+.dato{ padding:2px 22px 2px 0; margin-right:22px; border-right:1px solid var(--pergamino-2); }
+.dato:last-child{ border-right:none; }
+.dato .num{ font-family:var(--display); font-size:1.4rem; color:var(--tinta); line-height:1.1; }
+.dato .lbl{ font-size:.62rem; color:var(--rosa-viejo); letter-spacing:.08em; text-transform:uppercase; margin-top:2px; }
+.dato.alerta .num{ color:var(--alerta); }
 
-.boton{
-  display:inline-flex; align-items:center; gap:8px;
-  padding:13px 28px; border:1px solid var(--oro); background:transparent; color:var(--tinta);
-  font-family:var(--texto); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
-  cursor:pointer; text-decoration:none; transition:background .3s ease, color .3s ease;
+.barra{ padding:14px 24px; border-bottom:1px solid var(--pergamino-2); background:var(--blanco); }
+.barra input[type=text]{
+  width:100%; max-width:420px; padding:10px 12px; border:1px solid var(--pergamino-2);
+  background:var(--pergamino); font-family:inherit; font-size:.9rem; border-radius:3px;
 }
-.boton:hover{ background:var(--oro); color:var(--blanco-calido); }
-.boton--solido{ background:var(--oro); color:var(--blanco-calido); }
-.boton--solido:hover{ background:var(--tinta); border-color:var(--tinta); }
-.fila-botones{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:18px; }
 
-/* -------- aviso de cambio de sede -------- */
-.aviso-cambio{
-  background:var(--blanco-calido); border:1px solid var(--oro); border-left:4px solid var(--oro);
-  padding:16px 18px; margin-bottom:16px; box-shadow:var(--sombra);
+.lista-invitados{ max-width:900px; margin:0 auto; padding:18px 24px 60px; }
+.fila-invitado{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  background:var(--blanco); border:1px solid var(--pergamino-2); border-radius:3px;
+  padding:14px 18px; margin-bottom:10px;
 }
-.aviso-cambio .etiqueta{ color:var(--oro); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; font-weight:600; }
-.aviso-cambio p{ margin-top:6px; line-height:1.5; font-size:.84rem; }
-.aviso-cambio .tachado{ opacity:.55; text-decoration:line-through; }
-
-/* -------- tarjeta de confirmación / mesa -------- */
-.tarjeta{ background:var(--blanco-calido); box-shadow:var(--sombra); padding:20px 20px; }
-.tarjeta .rol{ color:var(--oro); font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; }
-.tarjeta h3{ font-size:1.2rem; margin:6px 0 10px; }
-.resumen-num{ display:flex; gap:24px; flex-wrap:wrap; margin:4px 0 14px; }
-.resumen-num .num{ font-family:var(--display); font-size:1.6rem; color:var(--oro); line-height:1; }
-.resumen-num .lbl{ font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; opacity:.65; margin-top:3px; }
+.fila-invitado .nombre{ font-weight:500; font-size:.95rem; }
+.fila-invitado .cont{ font-size:.72rem; color:var(--rosa-viejo); margin-top:2px; }
+.fila-mesas{ display:flex; flex-wrap:wrap; gap:6px; }
 .pastilla-mesa{
-  display:inline-flex; align-items:center; gap:8px; margin:5px 6px 0 0;
-  padding:7px 14px; border:1px solid var(--pergamino-2); border-radius:20px;
-  font-size:.8rem; background:var(--pergamino);
+  display:inline-flex; align-items:center; gap:4px; padding:4px 11px; border-radius:14px;
+  font-size:.72rem; background:var(--pergamino); border:1px solid var(--pergamino-2);
 }
 .pastilla-mesa .n{ font-family:var(--display); font-style:italic; color:var(--rosa-viejo); }
-.nota-pendiente{ font-size:.78rem; color:var(--rosa-viejo); margin-top:10px; line-height:1.5; }
+.pendiente{ font-size:.72rem; color:var(--alerta); font-weight:500; }
+.acciones-fila{ display:flex; gap:8px; flex-wrap:wrap; }
 
-/* -------- carrusel horizontal: cada parte de la confirmación es una
-   tarjeta de pantalla completa, se pasa deslizando de lado en vez de
-   desplazarse hacia abajo (pensado sobre todo para celular) -------- */
-.carrusel-conf{
-  flex:1 1 auto; min-height:0; display:flex;
-  overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
+.boton{
+  font-family:var(--texto); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+  border:1px solid var(--oro); background:transparent; color:var(--tinta);
+  padding:8px 14px; border-radius:2px; cursor:pointer; text-decoration:none; display:inline-block;
 }
-.carrusel-conf::-webkit-scrollbar{ display:none; }
-.panel-conf{
-  flex:0 0 100%; max-width:100%; min-height:0; overflow-y:auto;
-  scroll-snap-align:start; padding:6px 24px 16px; position:relative;
-  display:flex; flex-direction:column; justify-content:center;
-}
-.carrusel-nav{ flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:18px; padding:8px 0 14px; }
-.carrusel-flecha{
-  width:34px; height:34px; border-radius:50%; border:1px solid var(--oro); background:transparent; color:var(--tinta);
-  display:flex; align-items:center; justify-content:center; cursor:pointer; flex:0 0 auto; padding:0;
-}
-.carrusel-flecha:hover{ background:var(--oro); color:#fff; }
-.carrusel-flecha svg{ width:16px; height:16px; }
-.carrusel-puntos{ display:flex; gap:7px; }
-.punto{ width:7px; height:7px; border-radius:50%; background:var(--pergamino-2); border:none; cursor:pointer; padding:0; }
-.punto.activo{ background:var(--oro); width:20px; border-radius:5px; transition:width .25s ease, background .25s ease; }
+.boton:hover{ background:var(--oro); color:#fff; }
+.boton--solido{ background:var(--oro); color:#fff; }
+.boton--solido:hover{ background:var(--tinta); border-color:var(--tinta); }
 
-/* -------- secciones oscuras con esquineros de trébol -------- */
-.panel-conf--oscura{ background-color:var(--tinta); color:var(--blanco-calido); }
-.panel-conf--oscura::before, .panel-conf--oscura::after{
-  content:""; position:absolute; left:0; right:0; height:16px;
-  background-image:radial-gradient(circle 8px at 10px 8px, var(--pergamino) 7.6px, transparent 8px);
-  background-repeat:repeat-x; background-size:20px 16px; pointer-events:none;
-}
-.panel-conf--oscura::before{ top:-1px; }
-.panel-conf--oscura::after{ bottom:-1px; }
-.esquineros-flor{
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cpath d='M30.0,24.6 Q30.0,31.4 30.0,43.2' fill='none' stroke='%23C9A227' stroke-width='1.4' stroke-linecap='round'/%3E%3Ccircle cx='30.0' cy='13.9' r='9.9' fill='%23C9A227'/%3E%3Ccircle cx='37.0' cy='26.0' r='9.9' fill='%23C9A227'/%3E%3Ccircle cx='23.0' cy='26.0' r='9.9' fill='%23C9A227'/%3E%3Ccircle cx='30.0' cy='13.9' r='8.5' fill='%23FAF6EA'/%3E%3Ccircle cx='37.0' cy='26.0' r='8.5' fill='%23FAF6EA'/%3E%3Ccircle cx='23.0' cy='26.0' r='8.5' fill='%23FAF6EA'/%3E%3Ccircle cx='30.0' cy='22.0' r='2.2' fill='%23C9A227'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cg transform='rotate(180 30.0 30.0)'%3E%3Cpath d='M30.0,24.6 Q30.0,31.4 30.0,43.2' fill='none' stroke='%23C9A227' stroke-width='1.4' stroke-linecap='round'/%3E%3Ccircle cx='30.0' cy='13.9' r='9.9' fill='%23C9A227'/%3E%3Ccircle cx='37.0' cy='26.0' r='9.9' fill='%23C9A227'/%3E%3Ccircle cx='23.0' cy='26.0' r='9.9' fill='%23C9A227'/%3E%3Ccircle cx='30.0' cy='13.9' r='8.5' fill='%23FAF6EA'/%3E%3Ccircle cx='37.0' cy='26.0' r='8.5' fill='%23FAF6EA'/%3E%3Ccircle cx='23.0' cy='26.0' r='8.5' fill='%23FAF6EA'/%3E%3Ccircle cx='30.0' cy='22.0' r='2.2' fill='%23C9A227'/%3E%3C/g%3E%3C/svg%3E");
-  background-repeat:no-repeat, no-repeat;
-  background-size:56px 56px, 56px 56px;
-  background-position:calc(100% - 6px) 6px, 6px calc(100% - 6px);
-}
-
-/* -------- itinerario -------- */
-.itinerario{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
-.paso{
-  background:var(--blanco-calido); color:var(--tinta); border-radius:4px; padding:14px 8px;
-  box-shadow:var(--sombra); display:flex; flex-direction:column; align-items:center; text-align:center; gap:2px;
-}
-.paso-icono{ width:30px; height:30px; margin-bottom:4px; display:flex; align-items:center; justify-content:center; color:var(--oro); }
-.paso-icono svg{ width:20px; height:20px; }
-.paso .hora{ font-family:var(--display); font-size:.92rem; color:var(--oro); }
-.paso .titulo{ font-size:.82rem; font-weight:600; }
-.paso .lugar{ font-size:.7rem; opacity:.7; }
-
-/* -------- tarjetas de ubicación -------- */
-.tarjeta-lugar{ background:var(--blanco-calido); border:1px solid var(--pergamino-2); box-shadow:var(--sombra); padding:18px 18px; }
-.tarjeta-lugar .rol{ color:var(--oro); font-size:.64rem; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-.badge-nueva{ background:var(--salvia); color:#fff; font-size:.58rem; letter-spacing:.06em; padding:2px 8px; border-radius:10px; text-transform:uppercase; }
-.tarjeta-lugar h3{ font-size:1.15rem; margin:6px 0 3px; }
-.tarjeta-lugar iframe{ width:100%; height:150px; border:0; margin-top:10px; filter:sepia(12%); }
-
-.hashtag{ font-family:var(--display); font-style:italic; font-size:1rem; color:var(--rosa-viejo); }
-.pie{ text-align:center; padding-top:18px; }
-.pie .nombre-pie{ font-family:var(--display); font-style:italic; font-size:1.2rem; }
-.pie small{ display:block; margin-top:8px; opacity:.55; font-size:.68rem; }
-
-.estado{ flex:1 1 auto; display:flex; align-items:center; justify-content:center; text-align:center; opacity:.7; padding:20px 20px; font-size:.92rem; line-height:1.7; }
-.buscador{ flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; max-width:340px; margin:0 auto; padding:0 20px; text-align:center; }
-.contenido-flex{ display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
-.buscador input{ width:100%; padding:13px 14px; border:1px solid var(--pergamino-2); background:var(--blanco-calido); font-family:inherit; font-size:.9rem; }
+.vacio, .estado{ text-align:center; opacity:.6; padding:40px 12px; font-size:.9rem; }
 .oculto{ display:none; }
 </style>
 </head>
 <body>
 
-<!-- ================================================================
-     ⚙️ CONFIGURACIÓN
-     ================================================================ -->
+<nav class="nav-sitio">
+  <a href="index.html">Dedicatorias</a>
+  <a href="invitacion.html">Invitación</a>
+  <a href="croquis-mesas.html">Croquis de mesas</a>
+</nav>
+
 <script>
 const CONFIG = {
-  nombrePareja: "Yuxzitl & Olaf",
   urlConfirmaciones: "https://script.google.com/macros/s/AKfycbzq4spw5obSP7GICQUfyru4CRQimiRQBhfPoBoXuSSOpKfI1jYDml6oa0-2EJHh0C9kYQ/exec",
-  hashtag: "#YuxzitlyOlaf2026",
-
-  // ---- Misa: no cambió ----
-  misa: {
-    rol: "Misa",
-    nombre: "Parroquia de la Inmaculada Concepción",
-    direccion: "Libertad & Nicolás Bravo, La Conchita, 56600 Chalco de Díaz Covarrubias, Méx.",
-    hora: "2:00 PM",
-    mapsQuery: "Parroquia de la Inmaculada Concepción, Chalco, Estado de México, México"
-  },
-
-  // ---- Recepción: CAMBIÓ de lugar respecto a la invitación impresa ----
-  recepcion: {
-    rol: "Recepción",
-    nombre: "El Jardín La Finca",
-    direccion: "Chalco de Díaz Covarrubias, Estado de México",
-    hora: "3:30 PM",
-    mapsQuery: "19.2525278,-98.8944722"
-  },
-  recepcionAnteriorNombre: "Salón Ejidal Santiaguito",
-
-  itinerario: [
-    { hora: "2:00 pm", titulo: "Misa", lugar: "Parroquia", icono: "iglesia" },
-    { hora: "3:30 pm", titulo: "Recepción", lugar: "Nuevo salón", icono: "recepcion" },
-    { hora: "4:00 pm", titulo: "Comida", lugar: "", icono: "comida" },
-    { hora: "5:30 pm", titulo: "Brindis", lugar: "", icono: "brindis" },
-    { hora: "6:00 pm", titulo: "Primer baile", lugar: "", icono: "corazon" },
-    { hora: "7:00 pm", titulo: "Baile", lugar: "", icono: "musica" }
-  ]
+  // Nombre del archivo con la página personalizada de cada invitado.
+  paginaInvitado: "mi-confirmacion.html"
 };
 </script>
 
-<div class="envoltura">
+<header>
+  <p class="sub">Panel privado</p>
+  <h1>Confirmaciones</h1>
+</header>
 
-  <div class="cabecera">
-    <p class="ojo-de-cerradura">Solo para ti</p>
-    <h1>¡Gracias por confirmar!</h1>
-    <p class="nombre-invitado" id="txt-nombre-invitado"></p>
-    <div class="divisor"><svg viewBox="0 0 120 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 17c14 0 14-12 24-12s10 12 24 12 14-12 24-12 10 12 24 12 14-12 24-12" stroke="currentColor" stroke-width="1"/><circle cx="60" cy="17" r="3" fill="currentColor"/></svg></div>
-  </div>
+<div class="resumen" id="resumen"></div>
 
-  <div id="buscador-cont" class="buscador oculto">
-    <p style="margin-bottom:14px; opacity:.8;">Escribe tu nombre tal como confirmaste, para ver tu mesa asignada.</p>
-    <input type="text" id="in-buscar-nombre" placeholder="Tu nombre">
-    <div class="fila-botones"><button class="boton boton--solido" id="btn-buscar">Ver mi confirmación</button></div>
-  </div>
-
-  <div id="estado" class="estado oculto"></div>
-
-  <div id="contenido" class="contenido-flex oculto">
-
-    <div class="carrusel-conf" id="carrusel">
-
-      <section class="panel-conf">
-        <div class="aviso-cambio">
-          <p class="etiqueta">Aviso importante</p>
-          <p>El lugar de la <strong>recepción cambió</strong> respecto a lo que dice tu invitación impresa. Donde decía
-            <span class="tachado" id="txt-sede-anterior"></span>, ahora será en <strong id="txt-sede-nueva"></strong>. La misa sigue igual.</p>
-        </div>
-        <div class="tarjeta">
-          <p class="rol">Tu confirmación</p>
-          <h3 id="txt-resumen-nombre"></h3>
-          <div class="resumen-num">
-            <div><div class="num" id="num-personas"></div><div class="lbl">Personas</div></div>
-          </div>
-          <div id="cont-mesas"></div>
-          <p class="nota-pendiente oculto" id="nota-pendiente"></p>
-        </div>
-      </section>
-
-      <section class="panel-conf panel-conf--oscura esquineros-flor">
-        <div class="centro">
-          <p class="ojo-de-cerradura">El gran día</p>
-          <h2 style="font-size:1.4rem; margin-top:6px;">Itinerario</h2>
-        </div>
-        <div class="itinerario" id="cont-itinerario"></div>
-      </section>
-
-      <section class="panel-conf">
-        <div class="centro" style="margin-bottom:14px;">
-          <p class="ojo-de-cerradura">¿Dónde?</p>
-          <h2 style="font-size:1.4rem; margin-top:6px;">Misa</h2>
-        </div>
-        <div id="cont-lugar-misa"></div>
-      </section>
-
-      <section class="panel-conf">
-        <div class="centro" style="margin-bottom:14px;">
-          <p class="ojo-de-cerradura">¿Dónde?</p>
-          <h2 style="font-size:1.4rem; margin-top:6px;">Recepción</h2>
-        </div>
-        <div id="cont-lugar-recepcion"></div>
-        <div class="pie">
-          <p class="hashtag" id="txt-hashtag"></p>
-          <p style="font-size:.72rem; opacity:.65; margin-top:4px;">No olvides usar el hashtag en tus publicaciones.</p>
-        </div>
-      </section>
-
-    </div>
-
-    <div class="carrusel-nav">
-      <button class="carrusel-flecha" id="flecha-izq" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
-      <div class="carrusel-puntos" id="puntos-conf"></div>
-      <button class="carrusel-flecha" id="flecha-der" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
-    </div>
-
-  </div>
-
+<div class="barra">
+  <input type="text" id="buscar" placeholder="Buscar invitado…">
 </div>
+
+<div id="estado" class="estado">Cargando...</div>
+<div class="lista-invitados" id="lista"></div>
 
 <script>
 const $ = (id) => document.getElementById(id);
-
-const ICONOS = {
-  iglesia: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v5M9 4h6"/><path d="M4 21V11l8-6 8 6v10"/><path d="M4 21h16"/><path d="M10 21v-6h4v6"/></svg>`,
-  recepcion: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10a8 8 0 0 1 16 0v11"/><path d="M4 21h16"/><path d="M8 21v-5"/><path d="M16 21v-5"/></svg>`,
-  comida: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v7a2 2 0 0 0 2 2v11"/><path d="M7 2v5"/><path d="M9.5 2v5"/><path d="M17 2c-1.6 1-2.3 3-2.3 5.2 0 1.8.7 3 2.3 3.8v11"/></svg>`,
-  brindis: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h6l-1 8a2 2 0 0 1-4 0Z"/><path d="M14 3h6l-1 8a2 2 0 0 1-4 0Z"/><path d="M7 11v10M17 11v10"/><path d="M4 20h4M16 20h4"/></svg>`,
-  corazon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.6-9.5 9-9.5 9z"/></svg>`,
-  musica: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>`
-};
 
 function esc(t){ const d=document.createElement("div"); d.textContent=t||""; return d.innerHTML; }
 function normalizar(t){
   return (t||"").trim().toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 }
-function mostrarEstado(msg){
-  $("estado").innerHTML = msg;
-  $("estado").classList.remove("oculto");
-  $("contenido").classList.add("oculto");
-  $("buscador-cont").classList.add("oculto");
-}
-function mostrarBuscador(){
-  $("buscador-cont").classList.remove("oculto");
-  $("estado").classList.add("oculto");
-  $("contenido").classList.add("oculto");
-}
 
-function pintarEstatico(){
-  $("txt-sede-anterior").textContent = CONFIG.recepcionAnteriorNombre;
-  $("txt-sede-nueva").textContent = CONFIG.recepcion.nombre;
-  $("txt-hashtag").textContent = CONFIG.hashtag;
+let invitados = [];
+let croquisActual = null;
+let busqueda = "";
 
-  $("cont-itinerario").innerHTML = CONFIG.itinerario.map(p => `
-    <div class="paso">
-      <div class="paso-icono">${ICONOS[p.icono] || ""}</div>
-      <p class="hora">${esc(p.hora)}</p>
-      <p class="titulo">${esc(p.titulo)}</p>
-      ${p.lugar ? `<p class="lugar">${esc(p.lugar)}</p>` : ""}
-    </div>
-  `).join("");
-
-  function renderLugar(l){
-    return `
-      <div class="tarjeta-lugar">
-        <p class="rol">${esc(l.rol)} ${l.esNueva ? `<span class="badge-nueva">Ubicación actualizada</span>` : ""}</p>
-        <h3>${esc(l.nombre)}</h3>
-        <p style="opacity:.75;">${esc(l.direccion)}</p>
-        <p style="margin-top:6px; font-family:var(--display); font-size:1rem;">${esc(l.hora)}</p>
-        <iframe src="https://www.google.com/maps?q=${encodeURIComponent(l.mapsQuery)}&output=embed" loading="lazy"></iframe>
-        <div class="fila-botones" style="justify-content:flex-start; margin-top:14px;">
-          <a class="boton" href="https://maps.google.com/?q=${encodeURIComponent(l.mapsQuery)}" target="_blank" rel="noopener">Google Maps</a>
-          <a class="boton" href="https://waze.com/ul?q=${encodeURIComponent(l.mapsQuery)}&navigate=yes" target="_blank" rel="noopener">Waze</a>
-        </div>
-      </div>`;
-  }
-  $("cont-lugar-misa").innerHTML = renderLugar(CONFIG.misa);
-  $("cont-lugar-recepcion").innerHTML = renderLugar(Object.assign({}, CONFIG.recepcion, { esNueva: true }));
-}
-
-/* ---------- carrusel: swipe nativo + flechas + puntos ---------- */
-function iniciarCarrusel(){
-  const carrusel = $("carrusel");
-  const paneles = Array.from(carrusel.children);
-  const puntosCont = $("puntos-conf");
-  puntosCont.innerHTML = paneles.map((_,i) => `<button class="punto" data-ir="${i}" aria-label="Ir a la parte ${i+1}"></button>`).join("");
-  const puntos = Array.from(puntosCont.children);
-
-  function marcarActivo(i){
-    puntos.forEach((p,idx) => p.classList.toggle("activo", idx === i));
-  }
-  function irAPanel(i){
-    i = Math.max(0, Math.min(paneles.length - 1, i));
-    carrusel.scrollTo({ left: paneles[i].offsetLeft, behavior: "smooth" });
-  }
-  function panelActual(){
-    return Math.round(carrusel.scrollLeft / carrusel.clientWidth);
-  }
-
-  let t = null;
-  carrusel.addEventListener("scroll", () => {
-    clearTimeout(t);
-    t = setTimeout(() => marcarActivo(panelActual()), 80);
-  });
-  puntos.forEach(p => p.addEventListener("click", () => irAPanel(Number(p.dataset.ir))));
-  $("flecha-izq").addEventListener("click", () => irAPanel(panelActual() - 1));
-  $("flecha-der").addEventListener("click", () => irAPanel(panelActual() + 1));
-
-  marcarActivo(0);
-}
-
-/* Busca en el croquis (mesas + grupos + asign) a todos los grupos que
-   coincidan con el invitado. Un mismo invitado puede aparecer repartido en
-   varias mesas (varios grupos con el mismo nombre, o un grupo cuyo `asign`
-   ya está repartido en más de una mesa): por eso se suman todas las
-   coincidencias en vez de quedarnos con la primera. */
-function buscarGrupos(croquis, { id, nombre }){
-  if (id) return croquis.grupos.filter(g => g.id === id);
-  const buscado = normalizar(nombre);
-  const exactos = croquis.grupos.filter(g => normalizar(g.nombre) === buscado);
-  if (exactos.length) return exactos;
-
-  // Sin coincidencia exacta: probamos si el nombre del grupo (todas sus
-  // palabras) aparece completo dentro de lo que escribió el invitado — útil
-  // para grupos guardados solo con el primer nombre (ej. "OLAF" dentro de
-  // "Olaf Adame"). Si calificara más de un grupo con nombre distinto, no
-  // adivinamos: mejor pedir un nombre más preciso que mezclar a dos personas.
-  const palabrasBuscadas = buscado.split(/\s+/).filter(Boolean);
-  const candidatos = croquis.grupos.filter(g => {
-    const palabrasGrupo = normalizar(g.nombre).split(/\s+/).filter(Boolean);
-    return palabrasGrupo.length && palabrasGrupo.every(p => palabrasBuscadas.includes(p));
-  });
-  const nombresUnicos = new Set(candidatos.map(g => normalizar(g.nombre)));
-  return nombresUnicos.size === 1 ? candidatos : [];
-}
-
-function pintarConfirmacion(nombreMostrado, grupos, croquis){
-  const total = grupos.reduce((s,g) => s + g.total, 0);
-  const porMesa = {};
-  grupos.forEach(g => {
+/* Agrupa los `grupos` del croquis por nombre (normalizado): un mismo
+   invitado puede tener varias filas en la hoja de Silvia (porque quedó
+   repartido en distintas mesas), así que se juntan en una sola fila con
+   todas sus mesas. */
+function agruparPorInvitado(croquis){
+  const mapa = new Map();
+  croquis.grupos.forEach(g => {
+    const clave = normalizar(g.nombre);
+    if (!mapa.has(clave)) mapa.set(clave, { nombre: g.nombre, total: 0, mesas: {} });
+    const entrada = mapa.get(clave);
+    entrada.total += g.total;
     const asign = croquis.asign[g.id] || {};
     Object.entries(asign).forEach(([mesaId, cant]) => {
-      porMesa[mesaId] = (porMesa[mesaId] || 0) + cant;
+      entrada.mesas[mesaId] = (entrada.mesas[mesaId] || 0) + cant;
     });
   });
-  const mesaIds = Object.keys(porMesa);
-  const asignados = mesaIds.reduce((s,m) => s + porMesa[m], 0);
-
-  $("txt-nombre-invitado").textContent = nombreMostrado;
-  $("txt-resumen-nombre").textContent = nombreMostrado;
-  $("num-personas").textContent = total;
-
-  if (!mesaIds.length){
-    $("cont-mesas").innerHTML = `<p class="nota-pendiente">Tu mesa todavía no ha sido asignada — en cuanto esté lista te avisaremos por aquí mismo.</p>`;
-  } else {
-    const mesaPorId = (id) => croquis.mesas.find(m => m.id === id);
-    $("cont-mesas").innerHTML = mesaIds.map(mid => {
-      const m = mesaPorId(mid);
-      return `<span class="pastilla-mesa">Mesa <span class="n">${esc(m ? m.numero : "?")}</span> · ${porMesa[mid]} persona${porMesa[mid]===1?"":"s"}</span>`;
-    }).join("");
-    if (asignados < total){
-      const nota = $("nota-pendiente");
-      nota.textContent = `${total - asignados} persona(s) de tu grupo aún no tienen mesa asignada.`;
-      nota.classList.remove("oculto");
-    }
-  }
-
-  pintarEstatico();
-  $("contenido").classList.remove("oculto");
-  $("estado").classList.add("oculto");
-  $("buscador-cont").classList.add("oculto");
-  iniciarCarrusel();
+  return Array.from(mapa.values()).sort((a,b) => a.nombre.localeCompare(b.nombre, "es"));
 }
 
-async function cargarInvitado(criterio){
-  mostrarEstado("Buscando tu confirmación…");
+function linkInvitado(nombre){
+  const url = new URL(CONFIG.paginaInvitado, location.href);
+  url.search = "?invitado=" + encodeURIComponent(nombre);
+  return url.href;
+}
+
+function renderResumen(){
+  const totalInvitados = invitados.length;
+  const totalPersonas = invitados.reduce((s,i) => s + i.total, 0);
+  const totalAsignadas = invitados.reduce((s,i) => s + Object.values(i.mesas).reduce((a,b)=>a+b,0), 0);
+  const pendientes = totalPersonas - totalAsignadas;
+  $("resumen").innerHTML = `
+    <div class="dato"><div class="num">${totalInvitados}</div><div class="lbl">Invitados</div></div>
+    <div class="dato"><div class="num">${totalPersonas}</div><div class="lbl">Personas</div></div>
+    <div class="dato"><div class="num">${totalAsignadas}</div><div class="lbl">Con mesa</div></div>
+    <div class="dato ${pendientes>0?"alerta":""}"><div class="num">${pendientes}</div><div class="lbl">Sin mesa</div></div>
+  `;
+}
+
+function renderLista(){
+  const filtrados = busqueda
+    ? invitados.filter(i => normalizar(i.nombre).includes(normalizar(busqueda)))
+    : invitados;
+
+  if (!filtrados.length){
+    $("lista").innerHTML = `<p class="vacio">Sin resultados.</p>`;
+    return;
+  }
+
+  $("lista").innerHTML = filtrados.map(inv => {
+    const mesaIds = Object.keys(inv.mesas);
+    const mesasHTML = mesaIds.length
+      ? `<div class="fila-mesas">${mesaIds.map(mid => {
+          const m = croquisActual.mesas.find(x => x.id === mid);
+          return `<span class="pastilla-mesa">Mesa <span class="n">${esc(m ? m.numero : "?")}</span> · ${inv.mesas[mid]}</span>`;
+        }).join("")}</div>`
+      : `<span class="pendiente">Sin mesa asignada</span>`;
+    return `
+      <div class="fila-invitado">
+        <div>
+          <div class="nombre">${esc(inv.nombre)}</div>
+          <div class="cont">${inv.total} persona${inv.total===1?"":"s"}</div>
+          <div style="margin-top:6px;">${mesasHTML}</div>
+        </div>
+        <div class="acciones-fila">
+          <a class="boton" href="${linkInvitado(inv.nombre)}" target="_blank" rel="noopener">Vista previa</a>
+          <button class="boton boton--solido" data-copiar="${esc(inv.nombre)}">Copiar link</button>
+        </div>
+      </div>`;
+  }).join("");
+
+  $("lista").querySelectorAll("[data-copiar]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const url = linkInvitado(btn.dataset.copiar);
+      navigator.clipboard.writeText(url).then(() => {
+        const original = btn.textContent;
+        btn.textContent = "¡Copiado!";
+        setTimeout(() => { btn.textContent = original; }, 1500);
+      }).catch(() => { prompt("Copia este link manualmente:", url); });
+    });
+  });
+}
+
+async function cargar(){
+  $("estado").textContent = "Cargando...";
+  $("estado").classList.remove("oculto");
+  $("lista").innerHTML = "";
+  $("resumen").innerHTML = "";
+
   if (location.protocol === "file:"){
-    mostrarEstado(`Esta página necesita abrirse desde internet (no funciona con doble clic).<br><br>
-      Súbela junto con los demás archivos del sitio y ábrela desde esa dirección.`);
+    $("estado").innerHTML =
+      "Este archivo se abrió directamente desde tu computadora (doble clic), y los " +
+      "navegadores bloquean ese tipo de conexión por seguridad.<br><br>" +
+      "Súbelo a donde tengas hospedado el sitio y ábrelo desde esa URL.";
     return;
   }
   try{
     const r = await fetch(CONFIG.urlConfirmaciones + "?accion=croquis");
     const d = await r.json();
-    if (!d.ok || !d.croquis || !d.croquis.grupos){
-      mostrarEstado("No pudimos cargar la información en este momento. Intenta de nuevo en un rato.");
+    if (!d.ok || !d.croquis || !d.croquis.grupos || !d.croquis.grupos.length){
+      $("estado").textContent = "Todavía no hay invitados cargados en el croquis de mesas.";
       return;
     }
-    const grupos = buscarGrupos(d.croquis, criterio);
-    if (!grupos.length){
-      mostrarEstado(`No encontramos una confirmación a nombre de <strong>"${esc(criterio.nombre || criterio.id)}"</strong>.
-        Si crees que es un error, escríbenos directamente.<br><br>
-        <a class="boton" href="javascript:location.search=''">Buscar otro nombre</a>`);
-      return;
-    }
-    pintarConfirmacion(criterio.nombre || grupos[0].nombre, grupos, d.croquis);
-  }catch(e){
-    mostrarEstado("No se pudo conectar. Revisa tu conexión a internet e intenta de nuevo.");
+    croquisActual = d.croquis;
+    invitados = agruparPorInvitado(d.croquis);
+    $("estado").classList.add("oculto");
+    renderResumen();
+    renderLista();
+  }catch(err){
+    $("estado").innerHTML =
+      "No se pudo conectar.<br><br><strong>Detalle técnico:</strong> " + esc(err.message);
   }
 }
 
-const params = new URLSearchParams(location.search);
-const idParam = params.get("id");
-const nombreParam = params.get("invitado") || params.get("nombre");
+$("buscar").addEventListener("input", e => { busqueda = e.target.value; renderLista(); });
 
-if (idParam || nombreParam){
-  cargarInvitado({ id: idParam, nombre: nombreParam });
-} else {
-  mostrarBuscador();
-  $("btn-buscar").addEventListener("click", () => {
-    const v = $("in-buscar-nombre").value.trim();
-    if (!v) return;
-    location.search = "?invitado=" + encodeURIComponent(v);
-  });
-  $("in-buscar-nombre").addEventListener("keydown", e => { if(e.key === "Enter") $("btn-buscar").click(); });
-}
+cargar();
 </script>
 </body>
 </html>
