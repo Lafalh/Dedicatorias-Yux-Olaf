@@ -359,7 +359,10 @@ function iniciarCarrusel(){
   }
   function irAPanel(i){
     i = Math.max(0, Math.min(paneles.length - 1, i));
-    carrusel.scrollTo({ left: paneles[i].offsetLeft, behavior: "smooth" });
+    // Ojo: NO usar paneles[i].offsetLeft — es relativo a body, no al propio
+    // carrusel, así que en PC (donde .envoltura queda centrada con margen a
+    // los lados) el número sale mal y el botón "salta" al lugar equivocado.
+    carrusel.scrollTo({ left: i * carrusel.clientWidth, behavior: "smooth" });
   }
   function panelActual(){
     return Math.round(carrusel.scrollLeft / carrusel.clientWidth);
