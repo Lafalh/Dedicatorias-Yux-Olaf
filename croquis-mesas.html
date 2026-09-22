@@ -31,6 +31,17 @@ body{ font-family:var(--texto); background:var(--pergamino); color:var(--tinta);
       display:flex; flex-direction:column; height:100vh; overflow:hidden; }
 h1,h2,h3{ font-family:var(--display); font-weight:500; }
 
+.nav-sitio{ flex:0 0 auto; display:flex; background:var(--tinta); }
+.nav-sitio a{
+  flex:1 1 auto; text-align:center; padding:12px 10px;
+  color:var(--pergamino); text-decoration:none;
+  font-family:var(--texto); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
+  border-right:1px solid rgba(255,255,255,.14);
+  transition:background .25s ease, color .25s ease;
+}
+.nav-sitio a:last-child{ border-right:none; }
+.nav-sitio a:hover{ background:var(--oro); color:#fff; }
+
 header{ flex:0 0 auto; padding:22px 26px 16px; border-bottom:1px solid var(--pergamino-2); display:flex;
         align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; background:var(--blanco); }
 header h1{ font-size:1.7rem; font-style:italic; }
@@ -63,6 +74,18 @@ main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; ove
         gap:calc(var(--celda)*.11) calc(var(--celda)*.24); justify-content:start; padding:4px; width:max-content; }
 .rotulo{ display:flex; align-items:center; justify-content:center; font-size:.62rem; letter-spacing:.1em;
          color:var(--rosa-viejo); border:1px dashed var(--pergamino-2); border-radius:6px; }
+.plano > .mesa{ grid-column:var(--c); grid-row:var(--r) / span var(--rs,1); }
+.rotulo.entrada{ grid-column:2 / span 3; grid-row:1; }
+.rotulo.escenario{ grid-column:2 / span 3; grid-row:11; }
+/* Vista horizontal (pantallas grandes): el plano gira 90° para que la
+   entrada quede a la derecha y el escenario a la izquierda. Los números de
+   las mesas siguen derechos. */
+.plano.horizontal{ grid-template-columns:32px repeat(9,var(--celda)) 28px; grid-template-rows:repeat(6,var(--celda));
+        gap:calc(var(--celda)*.24) calc(var(--celda)*.11); }
+.plano.horizontal > .mesa{ grid-column:calc(13 - var(--r) - var(--rs,1)) / span var(--rs,1); grid-row:var(--c); }
+.plano.horizontal > .rotulo{ writing-mode:vertical-rl; grid-row:2 / span 3; }
+.plano.horizontal > .rotulo.entrada{ grid-column:11; }
+.plano.horizontal > .rotulo.escenario{ grid-column:1; }
 .mesa{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center;
        cursor:pointer; border:2px solid var(--pergamino-2); background:var(--blanco);
        transition:transform .12s, box-shadow .12s; user-select:none; }
@@ -167,13 +190,18 @@ const CONFIG = {
 };
 </script>
 
+<nav class="nav-sitio">
+  <a href="index.html">Dedicatorias</a>
+  <a href="invitacion.html">Invitación</a>
+  <a href="confirmacion.html">Confirmaciones</a>
+</nav>
+
 <header>
   <div>
     <p class="sub">Panel privado</p>
     <h1>Croquis de mesas</h1>
   </div>
   <div class="acciones">
-    <a class="boton" href="index.html">&larr; Dedicatorias</a>
     <button class="boton" id="btn-importar">Importar confirmados</button>
     <button class="boton" id="btn-agregar-mesa">+ Agregar mesa</button>
     <button class="boton" id="btn-reiniciar" title="Quitar a todos los invitados de sus mesas">Reiniciar acomodo</button>
@@ -609,21 +637,32 @@ function renderResumen(){
   `;
 }
 
+/* Posición lógica de cada mesa en la rejilla: columna (c), fila (r) y cuántas
+   filas ocupa (rs). El CSS decide si se dibuja en vertical (columna=c, fila=r)
+   o en horizontal (girado 90°: fila=c, columna=12-r). Pastel y Dulces no traían
+   fila de rejilla; van junto a la mesa de novios (filas 5 y 6). */
+const DECOR_FILA = { pastel:5, dulces:6 };
+function posicionRejilla(m){
+  const c = COL_X[m.col];
+  if(m.tipo==="decor") return { c, r: DECOR_FILA[m.id] || 5, rs: 1 };
+  return { c, r: ROW_G[m.row], rs: m.id==="novios" ? 2 : 1 };
+}
+
 function renderPlano(){
   const p = $("plano"); p.innerHTML="";
   const ent = document.createElement("div");
-  ent.className="rotulo"; ent.textContent="ENTRADA DEL SALÓN";
-  ent.style.gridColumn="2 / span 3"; ent.style.gridRow=1; p.appendChild(ent);
+  ent.className="rotulo entrada"; ent.textContent="ENTRADA DEL SALÓN"; p.appendChild(ent);
   const esc2 = document.createElement("div");
-  esc2.className="rotulo"; esc2.textContent="ESCENARIO";
-  esc2.style.gridColumn="2 / span 3"; esc2.style.gridRow=11; p.appendChild(esc2);
+  esc2.className="rotulo escenario"; esc2.textContent="ESCENARIO"; p.appendChild(esc2);
 
   estado.mesas.forEach(m=>{
     const d = document.createElement("div");
     const decor = m.tipo==="decor";
     d.className = "mesa " + (m.tipo==="redonda"?"redonda":m.tipo==="rectangular"?"rectangular":"decor");
-    d.style.gridColumn = COL_X[m.col];
-    d.style.gridRow = (m.id==="novios") ? `${ROW_G[m.row]} / span 2` : ROW_G[m.row];
+    const pos = posicionRejilla(m);
+    d.style.setProperty("--c", pos.c);
+    d.style.setProperty("--r", pos.r);
+    d.style.setProperty("--rs", pos.rs);
 
     if(decor){
       d.innerHTML = `<div class="n" style="font-size:.7rem">${esc(m.numero)}</div>`;
@@ -750,10 +789,17 @@ function ajustarCelda(){
   const notaH = nota ? nota.offsetHeight + 12 : 0;
   const anchoDisp = cont.clientWidth - padX - 4;
   const altoDisp = cont.clientHeight - padY - notaH - 12;
-  const K_COL = .24, K_ROW = .11, FILAS_FIJAS = 60, PAD_PLANO = 8;
-  const celdaAncho = (anchoDisp - PAD_PLANO) / (6 + 5*K_COL);
-  const celdaAlto  = (altoDisp - PAD_PLANO - FILAS_FIJAS) / (9 + 10*K_ROW);
-  const celda = Math.max(40, Math.min(84, celdaAncho, celdaAlto) * .97);
+  const K_COL = .24, K_ROW = .11, FILAS_FIJAS = 60, PAD_PLANO = 8, MIN = 40;
+  // Vertical: 6 columnas × (9 filas + 2 rótulos). Horizontal: lo mismo girado.
+  const celdaV = Math.min((anchoDisp - PAD_PLANO) / (6 + 5*K_COL),
+                          (altoDisp - PAD_PLANO - FILAS_FIJAS) / (9 + 10*K_ROW));
+  const celdaH = Math.min((anchoDisp - PAD_PLANO - FILAS_FIJAS) / (9 + 10*K_ROW),
+                          (altoDisp - PAD_PLANO) / (6 + 5*K_COL));
+  // Horizontal si cabe con mesas legibles y queda igual o más grande que la
+  // vertical (pantallas grandes); en celulares en vertical no cabe y se queda vertical.
+  const horizontal = celdaH >= MIN && celdaH >= celdaV;
+  $("plano").classList.toggle("horizontal", horizontal);
+  const celda = Math.max(MIN, Math.min(84, horizontal ? celdaH : celdaV) * .97);
   document.documentElement.style.setProperty("--celda", Math.floor(celda) + "px");
 }
 let _timerCelda = null;

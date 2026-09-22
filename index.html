@@ -159,9 +159,27 @@ h1,h2{ font-family:var(--display); font-weight:500; }
 }
 
 .vacio, .estado{ text-align:center; opacity:.6; padding:30px 10px; font-size:.9rem; }
+
+.nav-sitio{ display:flex; background:var(--tinta); }
+.nav-sitio a{
+  flex:1 1 auto; text-align:center; padding:14px 12px;
+  color:var(--pergamino); text-decoration:none;
+  font-family:var(--texto); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+  border-right:1px solid rgba(255,255,255,.14);
+  transition:background .25s ease, color .25s ease;
+}
+.nav-sitio a:last-child{ border-right:none; }
+.nav-sitio a:hover{ background:var(--oro); color:#fff; }
 </style>
 </head>
 <body>
+
+<nav class="nav-sitio">
+  <a href="invitacion.html">Invitación</a>
+  <a href="croquis-mesas.html">Croquis de mesas</a>
+  <a href="confirmacion.html">Confirmaciones</a>
+</nav>
+
 
 <!-- ================================================================
      ⚙️ CONFIGURACIÓN — pega aquí la misma URL que usaste en index.html
@@ -186,7 +204,6 @@ const CONFIG = {
 
   <div class="fila-botones">
     <button class="boton" id="btn-actualizar">Actualizar</button>
-    <a class="boton boton--solido" href="croquis-mesas.html">Croquis de mesas</a>
   </div>
 
   <div id="estado" class="estado"></div>
