@@ -79,8 +79,11 @@ main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; ove
 .plano{ display:grid; grid-template-columns:repeat(10,var(--celda)); grid-template-rows:repeat(5,var(--celda));
         gap:calc(var(--celda)*.11) calc(var(--celda)*.11); justify-content:start; padding:4px; width:max-content; }
 .plano > .mesa{ grid-column:var(--c) / span var(--cs,1); grid-row:var(--r) / span var(--rs,1); }
+.plano > .celda-vacia{ grid-column:var(--c); grid-row:var(--r); }
 .plano.vertical{ grid-template-columns:repeat(5,var(--celda)); grid-template-rows:repeat(10,var(--celda)); }
 .plano.vertical > .mesa{ grid-column:var(--r) / span var(--rs,1); grid-row:var(--c) / span var(--cs,1); }
+.plano.vertical > .celda-vacia{ grid-column:var(--r); grid-row:var(--c); }
+.celda-vacia{ border:1px dashed var(--pergamino-2); border-radius:6px; pointer-events:none; }
 .mesa.pista{ border-style:dashed; background:var(--pergamino-2); color:var(--rosa-viejo); font-size:.68rem; }
 /* ---------- modo organizar mesas ---------- */
 .plano.organizando .mesa{ cursor:grab; touch-action:none; }
@@ -324,7 +327,12 @@ async function cargar(){
     const d = await r.json();
     if(d.ok && d.croquis && d.croquis.grupos && d.croquis.grupos.length){
       estado = d.croquis;
-      if(!estado.mesas || !estado.mesas.length) estado.mesas = JSON.parse(JSON.stringify(SEED.mesas));
+      // El plano (mesas) siempre sale del archivo, nunca de lo guardado en la
+      // hoja: así, si cambia la rejilla o se mueven mesas aquí, el cambio se
+      // aplica aunque ya hubiera un acomodo guardado con datos viejos (por
+      // ejemplo, con columnas de letras en vez de números). Solo grupos y
+      // asign se conservan de la hoja.
+      estado.mesas = JSON.parse(JSON.stringify(SEED.mesas));
     } else {
       estado = JSON.parse(JSON.stringify(SEED));
       avisar("Primera vez: se cargó el acomodo inicial");
@@ -821,6 +829,19 @@ function renderPlano(){
     }
     p.appendChild(d);
   });
+
+  // En modo organizar se dibuja además cada celda vacía de la rejilla (10x5),
+  // solo para que se vea dónde hay espacio — no reciben clic ni arrastre,
+  // eso ya lo resuelve celdaDesdePunto() con la posición del mouse/dedo.
+  if(modoOrganizar){
+    celdasLibresPlano().forEach(({col,row})=>{
+      const v = document.createElement("div");
+      v.className = "celda-vacia";
+      v.style.setProperty("--c", col);
+      v.style.setProperty("--r", row);
+      p.appendChild(v);
+    });
+  }
 }
 
 function renderDetalle(){
