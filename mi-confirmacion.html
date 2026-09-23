@@ -61,6 +61,18 @@ h1,h2,h3{ font-family:var(--display); font-weight:500; line-height:1.15; }
 .aviso-cambio .etiqueta{ color:var(--rosa-viejo); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; }
 .aviso-cambio .aviso-grande{ margin-top:8px; line-height:1.35; font-size:1.15rem; font-weight:600; color:var(--tinta); }
 .aviso-cambio .aviso-grande strong{ color:var(--rosa-viejo); }
+.boton-mapa{
+  display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+  margin-top:14px; padding:12px 16px; border:none; border-radius:4px;
+  background:var(--oro); color:#fff; font-family:var(--texto); font-size:.82rem;
+  font-weight:600; letter-spacing:.04em; text-transform:uppercase; cursor:pointer;
+  box-shadow:0 6px 16px -6px rgba(201,162,39,.7);
+  animation:boton-mapa-pulso 1.6s ease-in-out infinite;
+}
+.boton-mapa span{ display:inline-block; animation:boton-mapa-flecha 1.2s ease-in-out infinite; }
+.boton-mapa:hover{ background:var(--tinta); }
+@keyframes boton-mapa-pulso{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.035); } }
+@keyframes boton-mapa-flecha{ 0%,100%{ transform:translateX(0); } 50%{ transform:translateX(5px); } }
 
 /* -------- tarjeta de confirmación / mesa -------- */
 .tarjeta{ background:var(--blanco-calido); box-shadow:var(--sombra); padding:20px 20px; }
@@ -224,6 +236,7 @@ const CONFIG = {
         <div class="aviso-cambio">
           <p class="etiqueta">⚠ Aviso importante</p>
           <p class="aviso-grande">La recepción cambió de lugar: ahora es en <strong id="txt-sede-nueva"></strong>.</p>
+          <button class="boton-mapa" id="btn-ver-mapa">Ver el mapa <span>→</span></button>
         </div>
         <div class="tarjeta">
           <p class="rol">Tu confirmación</p>
@@ -358,6 +371,7 @@ function iniciarCarrusel(){
   puntos.forEach(p => p.addEventListener("click", () => irAPanel(Number(p.dataset.ir))));
   $("flecha-izq").addEventListener("click", () => irAPanel(panelActual() - 1));
   $("flecha-der").addEventListener("click", () => irAPanel(panelActual() + 1));
+  $("btn-ver-mapa").addEventListener("click", () => irAPanel(NOMBRES_PANEL.indexOf("Recepción")));
 
   marcarActivo(0);
   setTimeout(ocultarPista, 4500);
