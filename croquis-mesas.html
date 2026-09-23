@@ -76,11 +76,11 @@ main{ flex:1 1 auto; min-height:0; display:flex; align-items:stretch; gap:0; ove
    columna/fila logicas de cada mesa (1-indexadas, igual que CSS grid); --cs/--rs
    cuantas celdas ocupa a lo ancho/alto. En pantallas angostas el plano se
    transpone (5x10) para que quepa mejor en un celular vertical. */
-.plano{ display:grid; grid-template-columns:repeat(10,var(--celda)); grid-template-rows:repeat(5,var(--celda));
+.plano{ display:grid; grid-template-columns:repeat(10,var(--celda)); grid-template-rows:repeat(6,var(--celda));
         gap:calc(var(--celda)*.11) calc(var(--celda)*.11); justify-content:start; padding:4px; width:max-content; }
 .plano > .mesa{ grid-column:var(--c) / span var(--cs,1); grid-row:var(--r) / span var(--rs,1); }
 .plano > .celda-vacia{ grid-column:var(--c); grid-row:var(--r); }
-.plano.vertical{ grid-template-columns:repeat(5,var(--celda)); grid-template-rows:repeat(10,var(--celda)); }
+.plano.vertical{ grid-template-columns:repeat(6,var(--celda)); grid-template-rows:repeat(10,var(--celda)); }
 .plano.vertical > .mesa{ grid-column:var(--r) / span var(--rs,1); grid-row:var(--c) / span var(--cs,1); }
 .plano.vertical > .celda-vacia{ grid-column:var(--r); grid-row:var(--c); }
 .celda-vacia{ border:1px dashed var(--pergamino-2); border-radius:6px; pointer-events:none; }
@@ -267,7 +267,7 @@ const COLORES = [
 ];
 
 const $ = (id)=>document.getElementById(id);
-const GRID_COLS = 10, GRID_ROWS = 5;
+const GRID_COLS = 10, GRID_ROWS = 6;
 const K_COL = .11, K_ROW = .11;
 
 let estado = null;
@@ -327,12 +327,13 @@ async function cargar(){
     const d = await r.json();
     if(d.ok && d.croquis && d.croquis.grupos && d.croquis.grupos.length){
       estado = d.croquis;
-      // El plano (mesas) siempre sale del archivo, nunca de lo guardado en la
-      // hoja: así, si cambia la rejilla o se mueven mesas aquí, el cambio se
-      // aplica aunque ya hubiera un acomodo guardado con datos viejos (por
-      // ejemplo, con columnas de letras en vez de números). Solo grupos y
-      // asign se conservan de la hoja.
-      estado.mesas = JSON.parse(JSON.stringify(SEED.mesas));
+      // Las mesas guardadas en la hoja se respetan (así sí se guarda el
+      // reacomodo que se hace en "Organizar mesas"), PERO si vienen en el
+      // formato viejo (columnas con letras, de antes de la rejilla 10x6) no
+      // sirven con este código: en ese caso se reemplazan por las del
+      // archivo, una sola vez, para no romper el plano.
+      const mesasCompatibles = estado.mesas && estado.mesas.length && typeof estado.mesas[0].col === "number";
+      if(!mesasCompatibles) estado.mesas = JSON.parse(JSON.stringify(SEED.mesas));
     } else {
       estado = JSON.parse(JSON.stringify(SEED));
       avisar("Primera vez: se cargó el acomodo inicial");
