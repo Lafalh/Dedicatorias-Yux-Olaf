@@ -55,12 +55,12 @@ h1,h2,h3{ font-family:var(--display); font-weight:500; line-height:1.15; }
 
 /* -------- aviso de cambio de sede -------- */
 .aviso-cambio{
-  background:var(--blanco-calido); border:1px solid var(--oro); border-left:4px solid var(--oro);
+  background:#FFF7DA; border:2px solid var(--oro); border-left:7px solid var(--oro);
   padding:16px 18px; margin-bottom:16px; box-shadow:var(--sombra);
 }
-.aviso-cambio .etiqueta{ color:var(--oro); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; font-weight:600; }
-.aviso-cambio p{ margin-top:6px; line-height:1.5; font-size:.84rem; }
-.aviso-cambio .tachado{ opacity:.55; text-decoration:line-through; }
+.aviso-cambio .etiqueta{ color:var(--rosa-viejo); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; }
+.aviso-cambio .aviso-grande{ margin-top:8px; line-height:1.35; font-size:1.15rem; font-weight:600; color:var(--tinta); }
+.aviso-cambio .aviso-grande strong{ color:var(--rosa-viejo); }
 
 /* -------- tarjeta de confirmación / mesa -------- */
 .tarjeta{ background:var(--blanco-calido); box-shadow:var(--sombra); padding:20px 20px; }
@@ -222,9 +222,8 @@ const CONFIG = {
 
       <section class="panel-conf">
         <div class="aviso-cambio">
-          <p class="etiqueta">Aviso importante</p>
-          <p>El lugar de la <strong>recepción cambió</strong> respecto a lo que dice tu invitación impresa. Donde decía
-            <span class="tachado" id="txt-sede-anterior"></span>, ahora será en <strong id="txt-sede-nueva"></strong>. La misa sigue igual.</p>
+          <p class="etiqueta">⚠ Aviso importante</p>
+          <p class="aviso-grande">La recepción cambió de lugar: ahora es en <strong id="txt-sede-nueva"></strong>.</p>
         </div>
         <div class="tarjeta">
           <p class="rol">Tu confirmación</p>
@@ -237,12 +236,12 @@ const CONFIG = {
         </div>
       </section>
 
-      <section class="panel-conf panel-conf--oscura esquineros-flor">
-        <div class="centro">
-          <p class="ojo-de-cerradura">El gran día</p>
-          <h2 style="font-size:1.4rem; margin-top:6px;">Itinerario</h2>
+      <section class="panel-conf">
+        <div class="centro" style="margin-bottom:14px;">
+          <p class="ojo-de-cerradura">¿Dónde?</p>
+          <h2 style="font-size:1.4rem; margin-top:6px;">Recepción</h2>
         </div>
-        <div class="itinerario" id="cont-itinerario"></div>
+        <div id="cont-lugar-recepcion"></div>
       </section>
 
       <section class="panel-conf">
@@ -251,14 +250,6 @@ const CONFIG = {
           <h2 style="font-size:1.4rem; margin-top:6px;">Misa</h2>
         </div>
         <div id="cont-lugar-misa"></div>
-      </section>
-
-      <section class="panel-conf">
-        <div class="centro" style="margin-bottom:14px;">
-          <p class="ojo-de-cerradura">¿Dónde?</p>
-          <h2 style="font-size:1.4rem; margin-top:6px;">Recepción</h2>
-        </div>
-        <div id="cont-lugar-recepcion"></div>
         <div class="pie">
           <p class="hashtag" id="txt-hashtag"></p>
           <p style="font-size:.72rem; opacity:.65; margin-top:4px;">No olvides usar el hashtag en tus publicaciones.</p>
@@ -304,18 +295,8 @@ function mostrarEstado(msg){
 }
 
 function pintarEstatico(){
-  $("txt-sede-anterior").textContent = CONFIG.recepcionAnteriorNombre;
   $("txt-sede-nueva").textContent = CONFIG.recepcion.nombre;
   $("txt-hashtag").textContent = CONFIG.hashtag;
-
-  $("cont-itinerario").innerHTML = CONFIG.itinerario.map(p => `
-    <div class="paso">
-      <div class="paso-icono">${ICONOS[p.icono] || ""}</div>
-      <p class="hora">${esc(p.hora)}</p>
-      <p class="titulo">${esc(p.titulo)}</p>
-      ${p.lugar ? `<p class="lugar">${esc(p.lugar)}</p>` : ""}
-    </div>
-  `).join("");
 
   function renderLugar(l){
     return `
@@ -340,7 +321,7 @@ function pintarEstatico(){
    un vistazo se nota que hay más contenido y qué es. La pista animada de
    "Desliza para ver más" se apaga sola apenas el invitado se mueve del
    primer panel, o a los pocos segundos si no la usa. */
-const NOMBRES_PANEL = ["Confirmación", "Itinerario", "Misa", "Recepción"];
+const NOMBRES_PANEL = ["Confirmación", "Recepción", "Misa"];
 
 function iniciarCarrusel(){
   const carrusel = $("carrusel");
