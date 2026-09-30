@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Lee archivos .xlsx en el navegador, para el botón "Importar Excel" -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --tinta:#33391F; --pergamino:#FBF7EA; --pergamino-2:#F1EEE3; --blanco:#FFFFFF;
@@ -211,6 +213,8 @@ const CONFIG = {
   </div>
   <div class="acciones">
     <button class="boton" id="btn-organizar" title="Mover mesas de lugar en el plano">▦ Organizar mesas</button>
+    <button class="boton" id="btn-importar-excel" title="Reemplazar la lista de invitados y su acomodo con un Excel de Silvia">⇪ Importar Excel</button>
+    <input type="file" id="input-excel" accept=".xlsx" style="display:none">
     <button class="boton" id="btn-reiniciar" title="Quitar a todos los invitados de sus mesas">Reiniciar acomodo</button>
     <button class="boton" id="btn-deshacer" disabled title="Deshacer el último cambio (Ctrl+Z)">↶ Deshacer</button>
     <button class="boton" id="btn-rehacer" disabled title="Rehacer (Ctrl+Y)">↷ Rehacer</button>
@@ -753,6 +757,124 @@ function activarArrastrePersona(contenedor){
   });
 }
 
+/* ---------- importar Excel de Silvia ----------
+   Hace en el navegador lo mismo que hacía actualizar_seed.py a mano: lee el
+   .xlsx con las "pistas" de mesas (columnas B/C/D, F/G/H, J/K/L, N/O/P y
+   Q/R + R/S para la mesa de novios), arma grupos+asign nuevos y los reparte
+   en las mesas redondas del plano actual ordenadas por cercanía a la mesa de
+   novios (mismo criterio que se usó siempre). El plano (mesas y su posición)
+   NO se toca, solo grupos/asign. Los invitados que se habían agregado a mano
+   porque confirmaron pero no venían en el Excel de Silvia (origen:
+   "confirmacion") se conservan, con su acomodo si ya tenían uno. */
+function colVal(ws, col, row){
+  const celda = ws[col+row];
+  return celda ? celda.v : null;
+}
+async function procesarExcelMesas(file){
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, {type:"array"});
+  const ws = wb.Sheets["Hoja1"] || wb.Sheets[wb.SheetNames[0]];
+  const rango = XLSX.utils.decode_range(ws["!ref"]);
+  const maxRow = rango.e.r + 1;
+
+  let noviosRow = null;
+  for(let r=1; r<=maxRow; r++){
+    if(colVal(ws,"R",r) === "MESA NOVIOS"){ noviosRow = r; break; }
+  }
+  if(!noviosRow) throw new Error("No se encontró la fila 'MESA NOVIOS' en la columna R del Excel.");
+
+  const tracks = [
+    ["B","C","D",1,maxRow],
+    ["F","G","H",1,maxRow],
+    ["J","K","L",1,maxRow],
+    ["N","O","P",1,maxRow],
+    ["Q","R",null,1,noviosRow-1],
+    ["R","S",null,noviosRow,maxRow],
+  ];
+
+  const mesasExcel = {};
+  for(const [ncol,ccol,ecol,r0,r1] of tracks){
+    let pendiente = [];
+    for(let r=r0; r<=r1; r++){
+      const nv = colVal(ws,ncol,r);
+      if(nv===null || nv===undefined || nv==="") continue;
+      if(typeof nv === "number"){
+        mesasExcel[nv] = pendiente;
+        pendiente = [];
+      } else {
+        const cv = colVal(ws,ccol,r) || 0;
+        const ev = ecol ? (colVal(ws,ecol,r) || 0) : 0;
+        pendiente.push([String(nv).trim(), cv+ev]);
+      }
+    }
+    if(pendiente.length) throw new Error(`La sección de la columna ${ncol} quedó sin terminar (falta el número de mesa al final de esa pista).`);
+  }
+
+  Object.keys(mesasExcel).forEach(num=>{
+    mesasExcel[num] = mesasExcel[num].filter(([n,c])=>!(n==="MESA NOVIOS" && c===0));
+  });
+
+  const noviosMembers = mesasExcel[27];
+  if(!noviosMembers) throw new Error("No se encontró la mesa 27 (mesa de novios) en el Excel.");
+  delete mesasExcel[27];
+
+  const ordenadas = Object.keys(mesasExcel).map(Number).sort((a,b)=>a-b);
+
+  const noviosMesa = mesaPorId("novios");
+  const nx = noviosMesa.col, ny = noviosMesa.row;
+  const redondas = estado.mesas.filter(m=>m.tipo==="redonda");
+  const dist = m => Math.hypot(m.col-nx, m.row-ny);
+  const redondasOrdenadas = redondas.slice().sort((a,b)=>{
+    const da = dist(a), db = dist(b);
+    return da!==db ? da-db : Number(a.numero)-Number(b.numero);
+  });
+
+  if(ordenadas.length !== redondasOrdenadas.length){
+    if(!confirm(`El Excel trae ${ordenadas.length} mesas y el plano tiene ${redondasOrdenadas.length}. Se van a emparejar en orden (las que sobren se quedan como estén). ¿Continuar de todas formas?`)) return null;
+  }
+
+  const nuevosGrupos = [];
+  const nuevoAsign = {};
+  let gid = 1;
+  function agregar(nombre, total, mesaId, origen){
+    const g = { id:"g"+gid, nombre, total };
+    if(origen) g.origen = origen;
+    nuevosGrupos.push(g);
+    nuevoAsign[g.id] = { [mesaId]: total };
+    gid++;
+  }
+  noviosMembers.forEach(([nombre,total])=>agregar(nombre,total,"novios"));
+  const n = Math.min(ordenadas.length, redondasOrdenadas.length);
+  for(let i=0; i<n; i++){
+    mesasExcel[ordenadas[i]].forEach(([nombre,total])=>agregar(nombre,total,redondasOrdenadas[i].id));
+  }
+
+  const extras = estado.grupos.filter(g=>g.origen==="confirmacion");
+  extras.forEach(g=>{
+    const nuevoId = "g"+gid;
+    const g2 = { id:nuevoId, nombre:g.nombre, total:g.total, origen:"confirmacion" };
+    nuevosGrupos.push(g2);
+    const asignPrevio = estado.asign[g.id];
+    if(asignPrevio) nuevoAsign[nuevoId] = JSON.parse(JSON.stringify(asignPrevio));
+    gid++;
+  });
+
+  if(noviosMesa) noviosMesa.capacidad = Math.max(noviosMesa.capacidad, noviosMembers.length);
+
+  const totalPersonas = nuevosGrupos.reduce((s,g)=>s+g.total,0);
+  const ocup = {};
+  Object.values(nuevoAsign).forEach(mapa=>Object.entries(mapa).forEach(([mid,cant])=>{ ocup[mid]=(ocup[mid]||0)+cant; }));
+  const excedidas = [];
+  estado.mesas.forEach(m=>{
+    if(m.tipo==="decor") return;
+    const occ = ocup[m.id]||0;
+    const tope = (m.id==="novios") ? (m.capacidad||TOPE) : TOPE;
+    if(occ>tope) excedidas.push(`Mesa ${m.numero} (${occ}/${tope})`);
+  });
+
+  return { grupos: nuevosGrupos, asign: nuevoAsign, totalPersonas, excedidas, extrasConservados: extras.length };
+}
+
 /* ---------- render ---------- */
 function render(){ renderResumen(); renderPlano(); renderDetalle(); renderFiltros(); renderLista(); ajustarCelda(); actualizarBarraOrganizar(); }
 
@@ -993,6 +1115,29 @@ $("btn-reiniciar").addEventListener("click", reiniciarAcomodo);
 $("btn-agregar-mesa").addEventListener("click", agregarMesa);
 $("btn-quitar-mesa").addEventListener("click", ()=>{ if(mesaSelOrg) quitarMesa(mesaSelOrg); });
 $("btn-rotar-novios").addEventListener("click", rotarNovios);
+$("btn-importar-excel").addEventListener("click", ()=> $("input-excel").click());
+$("input-excel").addEventListener("change", async e=>{
+  const file = e.target.files[0];
+  e.target.value = "";
+  if(!file) return;
+  if(!confirm("Esto va a reemplazar la lista de invitados y su acomodo de mesas con lo que traiga el Excel (los invitados que agregaste a mano porque confirmaron y no venían en el Excel se conservan). El plano de mesas no se mueve. ¿Continuar?")) return;
+  try{
+    const resultado = await procesarExcelMesas(file);
+    if(!resultado) return;
+    guardarHistorial();
+    estado.grupos = resultado.grupos;
+    estado.asign = resultado.asign;
+    mesaSel = null;
+    sucio = true;
+    render();
+    let msg = `Se importaron ${resultado.grupos.length} grupos (${resultado.totalPersonas} personas).`;
+    if(resultado.extrasConservados) msg += ` Se conservaron ${resultado.extrasConservados} invitados agregados a mano.`;
+    if(resultado.excedidas.length) msg += ` Mesas pasadas de tope: ${resultado.excedidas.join(", ")}.`;
+    alert(msg + "\n\nRevisa el acomodo y aprieta Guardar cuando esté bien.");
+  }catch(err){
+    alert("No se pudo importar el Excel: " + err.message);
+  }
+});
 $("btn-organizar").addEventListener("click", ()=>alternarOrganizar(true));
 $("btn-salir-organizar").addEventListener("click", ()=>alternarOrganizar(false));
 window.addEventListener("keydown", e=>{
