@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviso importante · Yuxzitl &amp; Olaf</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --tinta:        #33391F;
+  --pergamino:    #FBF7EA;
+  --pergamino-2:  #F1EEE3;
+  --rosa-viejo:   #A6822C;
+  --oro:          #C9A227;
+  --salvia:       #8B9A5B;
+  --alerta:       #B3413C;
+  --blanco-calido:#FFFFFF;
+  --display: "Fraunces", serif;
+  --texto:   "Jost", sans-serif;
+  --sombra: 0 18px 40px -18px rgba(51,57,31,.35);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{ font-family:var(--texto); background:var(--pergamino); color:var(--tinta); }
+h1,h2,h3{ font-family:var(--display); font-weight:500; line-height:1.15; }
+.envoltura{ max-width:560px; margin:0 auto; padding:0 20px 40px; }
+.centro{ text-align:center; }
+.ojo-de-cerradura{ text-transform:uppercase; letter-spacing:.24em; font-size:.68rem; color:var(--oro); font-weight:500; }
+.divisor{ width:100px; height:26px; margin:10px auto; color:var(--oro); }
+.divisor svg{ width:100%; height:100%; }
+
+.cabecera{ text-align:center; padding:28px 0 6px; }
+.cabecera h1{ font-size:1.6rem; font-style:italic; margin-top:6px; }
+
+.boton{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 28px; border:1px solid var(--oro); background:transparent; color:var(--tinta);
+  font-family:var(--texto); font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+  cursor:pointer; text-decoration:none; transition:background .3s ease, color .3s ease;
+}
+.boton:hover{ background:var(--oro); color:var(--blanco-calido); }
+.boton--solido{ background:var(--oro); color:var(--blanco-calido); border:none; }
+.boton--solido:hover{ background:var(--tinta); }
+.fila-botones{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:14px; }
+
+/* -------- aviso de cambio de sede: lo más importante de esta página -------- */
+.aviso-cambio{
+  background:#FFF7DA; border:2px solid var(--oro); border-left:9px solid var(--oro);
+  padding:24px 22px; margin:18px 0 26px; box-shadow:var(--sombra); text-align:center;
+}
+.aviso-cambio .etiqueta{ color:var(--rosa-viejo); font-size:.76rem; letter-spacing:.16em; text-transform:uppercase; font-weight:700; }
+.aviso-cambio .aviso-grande{ margin-top:10px; line-height:1.35; font-size:1.4rem; font-weight:600; color:var(--tinta); }
+.aviso-cambio .aviso-grande strong{ color:var(--rosa-viejo); display:block; font-size:1.6rem; margin-top:4px; }
+.aviso-cambio .direccion{ margin-top:8px; font-size:.86rem; opacity:.8; }
+
+/* -------- tarjetas de ubicación -------- */
+.tarjeta-lugar{ background:var(--blanco-calido); border:1px solid var(--pergamino-2); box-shadow:var(--sombra); padding:18px 18px; margin-bottom:18px; }
+.tarjeta-lugar .rol{ color:var(--oro); font-size:.64rem; letter-spacing:.16em; text-transform:uppercase; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.badge-nueva{ background:var(--salvia); color:#fff; font-size:.58rem; letter-spacing:.06em; padding:2px 8px; border-radius:10px; text-transform:uppercase; }
+.tarjeta-lugar h3{ font-size:1.15rem; margin:6px 0 3px; }
+.tarjeta-lugar iframe{ width:100%; height:160px; border:0; margin-top:10px; filter:sepia(12%); }
+
+.seccion{ margin-top:30px; }
+.seccion-titulo{ text-align:center; margin-bottom:14px; }
+.seccion-titulo h2{ font-size:1.3rem; margin-top:6px; }
+
+/* -------- formulario de confirmación general -------- */
+.tarjeta-rsvp{ background:var(--blanco-calido); box-shadow:var(--sombra); padding:22px 20px; }
+.campo{ margin-bottom:16px; text-align:left; }
+.campo label{ display:block; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--rosa-viejo); margin-bottom:7px; }
+.campo input, .campo select, .campo textarea{
+  width:100%; padding:11px 12px; border:1px solid var(--pergamino-2); background:var(--pergamino);
+  font-family:inherit; font-size:.9rem; color:var(--tinta); border-radius:3px;
+}
+.campo textarea{ resize:vertical; min-height:70px; }
+.form-rsvp.oculto, .confirmacion{ display:none; }
+.confirmacion.visible{ display:block; text-align:center; }
+.aviso-envio{ font-size:.78rem; color:var(--rosa-viejo); margin-top:10px; min-height:1.2em; }
+
+.hashtag{ font-family:var(--display); font-style:italic; font-size:1rem; color:var(--rosa-viejo); }
+.pie{ text-align:center; padding-top:30px; }
+.pie .nombre-pie{ font-family:var(--display); font-style:italic; font-size:1.2rem; }
+.pie small{ display:block; margin-top:8px; opacity:.55; font-size:.68rem; }
+</style>
+</head>
+<body>
+
+<script>
+const CONFIG = {
+  nombrePareja: "Yuxzitl & Olaf",
+  urlConfirmaciones: "https://script.google.com/macros/s/AKfycbzq4spw5obSP7GICQUfyru4CRQimiRQBhfPoBoXuSSOpKfI1jYDml6oa0-2EJHh0C9kYQ/exec",
+  hashtag: "#YuxzitlyOlaf2026",
+  pasesMaximos: 10,
+
+  misa: {
+    rol: "Misa",
+    nombre: "Parroquia de la Inmaculada Concepción",
+    direccion: "Libertad & Nicolás Bravo, La Conchita, 56600 Chalco de Díaz Covarrubias, Méx.",
+    hora: "2:00 PM",
+    mapsQuery: "Parroquia de la Inmaculada Concepción, Chalco, Estado de México, México"
+  },
+  recepcion: {
+    rol: "Recepción",
+    nombre: "El Jardín La Finca",
+    direccion: "Chalco de Díaz Covarrubias, Estado de México",
+    hora: "3:30 PM",
+    mapsQuery: "19.2525278,-98.8944722"
+  }
+};
+</script>
+
+<div class="envoltura">
+
+  <div class="cabecera">
+    <p class="ojo-de-cerradura">Aviso importante</p>
+    <h1 id="txt-titulo"></h1>
+    <div class="divisor"><svg viewBox="0 0 120 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 17c14 0 14-12 24-12s10 12 24 12 14-12 24-12 10 12 24 12 14-12 24-12" stroke="currentColor" stroke-width="1"/><circle cx="60" cy="17" r="3" fill="currentColor"/></svg></div>
+  </div>
+
+  <div class="aviso-cambio">
+    <p class="etiqueta">⚠ La recepción cambió de lugar</p>
+    <p class="aviso-grande">Ahora es en<strong id="txt-sede-nueva"></strong></p>
+    <p class="direccion" id="txt-direccion-nueva"></p>
+    <div class="fila-botones">
+      <a class="boton boton--solido" id="lnk-maps" target="_blank" rel="noopener">Ver en Google Maps</a>
+      <a class="boton" id="lnk-waze" target="_blank" rel="noopener">Ver en Waze</a>
+    </div>
+  </div>
+
+  <div class="tarjeta-lugar">
+    <p class="rol">Recepción <span class="badge-nueva">Ubicación actualizada</span></p>
+    <h3 id="txt-recepcion-nombre"></h3>
+    <p style="opacity:.75;" id="txt-recepcion-direccion"></p>
+    <p style="margin-top:6px; font-family:var(--display); font-size:1rem;" id="txt-recepcion-hora"></p>
+    <iframe id="mapa-recepcion" loading="lazy"></iframe>
+  </div>
+
+  <div class="seccion">
+    <div class="seccion-titulo">
+      <p class="ojo-de-cerradura">Confirma tu asistencia</p>
+      <h2>¿Nos acompañas?</h2>
+    </div>
+
+    <div class="tarjeta-rsvp">
+      <form class="form-rsvp" id="form-rsvp">
+        <div class="campo">
+          <label for="in-nombre">Tu nombre</label>
+          <input type="text" id="in-nombre" required placeholder="Nombre y apellido">
+        </div>
+        <div class="campo">
+          <label for="in-pases">¿Cuántos asistirán? (incluyéndote)</label>
+          <select id="in-pases"></select>
+        </div>
+        <div class="campo">
+          <label for="in-mensaje">Mensaje (opcional)</label>
+          <textarea id="in-mensaje" placeholder="Escribe unas palabras..."></textarea>
+        </div>
+        <div class="centro">
+          <button type="submit" class="boton boton--solido" id="btn-confirmar">Confirmar asistencia</button>
+          <p class="aviso-envio" id="aviso-rsvp"></p>
+        </div>
+      </form>
+
+      <div class="confirmacion" id="confirmacion">
+        <p class="ojo-de-cerradura">¡Listo!</p>
+        <h2 style="font-size:1.4rem; margin:10px 0;">Gracias por confirmar</h2>
+        <p style="opacity:.8;" id="txt-confirmacion-resumen"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tarjeta-lugar" style="margin-top:18px;">
+    <p class="rol">Misa</p>
+    <h3 id="txt-misa-nombre"></h3>
+    <p style="opacity:.75;" id="txt-misa-direccion"></p>
+    <p style="margin-top:6px; font-family:var(--display); font-size:1rem;" id="txt-misa-hora"></p>
+    <iframe id="mapa-misa" loading="lazy"></iframe>
+  </div>
+
+  <div class="pie">
+    <p class="nombre-pie" id="txt-nombre-pie"></p>
+    <p class="hashtag" id="txt-hashtag" style="margin-top:6px;"></p>
+    <small>Gracias por acompañarnos en este día ✦</small>
+  </div>
+
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+function esc(t){ const d=document.createElement("div"); d.textContent=t||""; return d.innerHTML; }
+
+function pintar(){
+  document.title = `Aviso importante · ${CONFIG.nombrePareja}`;
+  $("txt-titulo").textContent = CONFIG.nombrePareja;
+  $("txt-nombre-pie").textContent = CONFIG.nombrePareja;
+  $("txt-hashtag").textContent = CONFIG.hashtag;
+
+  const r = CONFIG.recepcion;
+  $("txt-sede-nueva").textContent = r.nombre;
+  $("txt-direccion-nueva").textContent = r.direccion;
+  $("lnk-maps").href = `https://maps.google.com/?q=${encodeURIComponent(r.mapsQuery)}`;
+  $("lnk-waze").href = `https://waze.com/ul?q=${encodeURIComponent(r.mapsQuery)}&navigate=yes`;
+
+  $("txt-recepcion-nombre").textContent = r.nombre;
+  $("txt-recepcion-direccion").textContent = r.direccion;
+  $("txt-recepcion-hora").textContent = r.hora;
+  $("mapa-recepcion").src = `https://www.google.com/maps?q=${encodeURIComponent(r.mapsQuery)}&output=embed`;
+
+  const m = CONFIG.misa;
+  $("txt-misa-nombre").textContent = m.nombre;
+  $("txt-misa-direccion").textContent = m.direccion;
+  $("txt-misa-hora").textContent = m.hora;
+  $("mapa-misa").src = `https://www.google.com/maps?q=${encodeURIComponent(m.mapsQuery)}&output=embed`;
+
+  const selectPases = $("in-pases");
+  for (let i = 1; i <= CONFIG.pasesMaximos; i++){
+    const op = document.createElement("option");
+    op.value = i;
+    op.textContent = i === 1 ? "1 persona" : `${i} personas`;
+    selectPases.appendChild(op);
+  }
+}
+
+function iniciarForm(){
+  const selectPases = $("in-pases");
+  $("form-rsvp").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const nombre = $("in-nombre").value.trim();
+    if (!nombre) return;
+    const pases = parseInt(selectPases.value);
+    const mensaje = $("in-mensaje").value.trim();
+
+    $("btn-confirmar").disabled = true;
+    $("aviso-rsvp").textContent = "Enviando...";
+
+    const datos = { nombre, asiste: "si", pases, mensaje, fecha: new Date().toISOString() };
+
+    try {
+      if (CONFIG.urlConfirmaciones && !CONFIG.urlConfirmaciones.startsWith("PEGA_AQUI")) {
+        // mode:"no-cors" porque el backend es Apps Script: no se puede leer
+        // la respuesta, así que si falla no nos enteramos aquí (igual que en
+        // invitacion.html) — los errores del backend se notan en los
+        // paneles que sí leen datos, no en esta página.
+        await fetch(CONFIG.urlConfirmaciones, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(datos)
+        });
+      }
+      $("form-rsvp").classList.add("oculto");
+      const conf = $("confirmacion");
+      conf.classList.add("visible");
+      $("txt-confirmacion-resumen").textContent = `${nombre} · ${pases} persona${pases===1?"":"s"}`;
+    } catch (err) {
+      $("aviso-rsvp").textContent = "Hubo un problema al enviar. Intenta de nuevo.";
+      $("btn-confirmar").disabled = false;
+    }
+  });
+}
+
+pintar();
+iniciarForm();
+</script>
+</body>
+</html>
