@@ -36,9 +36,11 @@ h1,h2{ font-family:var(--display); font-weight:500; }
 .nav-sitio a:last-child{ border-right:none; }
 .nav-sitio a:hover{ background:var(--oro); color:#fff; }
 
-header{ flex:0 0 auto; padding:16px 24px 12px; border-bottom:1px solid var(--pergamino-2); background:var(--blanco); }
+header{ flex:0 0 auto; padding:16px 24px 12px; border-bottom:1px solid var(--pergamino-2); background:var(--blanco);
+        display:flex; align-items:baseline; justify-content:space-between; gap:14px; flex-wrap:wrap; }
 header p.sub{ font-size:.72rem; color:var(--rosa-viejo); letter-spacing:.14em; text-transform:uppercase; }
 header h1{ font-size:1.4rem; font-style:italic; margin-top:2px; }
+.acciones{ display:flex; gap:8px; flex-wrap:wrap; }
 
 .resumen{ flex:0 0 auto; display:flex; flex-wrap:wrap; gap:0; padding:11px 24px; background:var(--blanco); border-bottom:1px solid var(--pergamino-2); }
 .dato{ padding:2px 22px 2px 0; margin-right:22px; border-right:1px solid var(--pergamino-2); }
@@ -106,8 +108,13 @@ const CONFIG = {
 </script>
 
 <header>
-  <p class="sub">Panel privado</p>
-  <h1>Confirmaciones</h1>
+  <div>
+    <p class="sub">Panel privado</p>
+    <h1>Confirmaciones</h1>
+  </div>
+  <div class="acciones">
+    <a class="boton" href="confirmacion-general.html" target="_blank" rel="noopener" title="Aviso general del cambio de sede, para compartir sin un link personalizado">Ver confirmación general</a>
+  </div>
 </header>
 
 <div class="resumen" id="resumen"></div>
